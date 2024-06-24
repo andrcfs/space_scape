@@ -1,0 +1,25 @@
+name: space_scape
+description: "A new Flame project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.3 <4.0.0"
+
+dependencies:
+  bonfire: ^3.6.2
+  flame: ^1.18.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  assets:
+    - assets/audio/
+    - assets/images/
+    - assets/tiles/
+  uses-material-design: true
