@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/geometry.dart';
+import 'package:flutter/material.dart';
 import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/xp.dart';
 import 'package:space_scape/game.dart';
 
 class Enemy extends SpriteAnimationComponent
@@ -14,10 +18,16 @@ class Enemy extends SpriteAnimationComponent
   }) : super(
           size: Vector2.all(enemySize),
           anchor: Anchor.center,
+          angle: 0,
         );
 
   static const enemySize = 25.0;
   static const enemySpeed = 50.0;
+  late Ray2 ray;
+  Vector2 direction = Vector2(0, 1);
+  double turnSpeed = 1.5;
+
+  int xpDropRate = 70;
 
   @override
   Future<void> onLoad() async {
@@ -31,17 +41,18 @@ class Enemy extends SpriteAnimationComponent
         textureSize: Vector2.all(16),
       ),
     );
+    //game.add(LineComponent(start: position, end: game.player.position));
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-
-    position.y += dt * enemySpeed;
-
-    if (position.y > game.size.y) {
-      removeFromParent();
+    var playerDirection = game.player.position - position;
+    if (playerDirection.angleToSigned(direction).abs() > 0.1) {
+      changeDirection(playerDirection.angleToSigned(direction), dt);
     }
+    direction = Vector2(0, 1)..rotate(angle);
+    position += direction * dt * enemySpeed;
   }
 
   @override
@@ -52,7 +63,10 @@ class Enemy extends SpriteAnimationComponent
     super.onCollisionStart(intersectionPoints, other);
 
     void enemyDeath() {
-      game.add(Explosion(position: position));
+      game.add(Explosion(position: position, size: Vector2.all(50)));
+      if (Random().nextInt(100) < xpDropRate) {
+        game.add(XP(position: position));
+      }
       removeFromParent();
     }
 
@@ -66,5 +80,39 @@ class Enemy extends SpriteAnimationComponent
     if (other is PlayerShip) {
       enemyDeath();
     }
+  }
+
+  void changeDirection(double angleBetween, double dt) {
+    if (angleBetween > 0) {
+      angle -= dt * turnSpeed;
+    }
+    if (angleBetween < 0) {
+      angle += dt * turnSpeed;
+    }
+  }
+}
+
+class LineComponent extends Component {
+  // Start and end points of the line
+  final Vector2 start;
+  final Vector2 end;
+  final Paint paint;
+
+  LineComponent({
+    required this.start,
+    required this.end,
+    Color color = Colors.blue,
+    double strokeWidth = 2.0,
+  }) : paint = Paint()
+          ..color = color
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke;
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // Draw the line on the canvas
+    canvas.drawLine(start.toOffset(), end.toOffset(), paint);
   }
 }

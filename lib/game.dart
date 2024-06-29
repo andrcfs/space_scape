@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -7,12 +6,22 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame/src/gestures/events.dart';
-import 'package:flutter/painting.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
-import 'package:flutter/src/widgets/focus_manager.dart';
 import 'package:space_scape/components/background.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
+
+final List<LogicalKeyboardKey> keys = [
+  LogicalKeyboardKey.arrowUp,
+  LogicalKeyboardKey.arrowDown,
+  LogicalKeyboardKey.arrowLeft,
+  LogicalKeyboardKey.arrowRight,
+  LogicalKeyboardKey.keyW,
+  LogicalKeyboardKey.keyS,
+  LogicalKeyboardKey.keyA,
+  LogicalKeyboardKey.keyD,
+];
 
 class SpaceGame extends FlameGame
     with
@@ -21,12 +30,16 @@ class SpaceGame extends FlameGame
         HasCollisionDetection,
         HasPerformanceTracker {
   late PlayerShip player;
+  late Enemy enemy;
+  late List<LogicalKeyboardKey> pressedKeys = [];
   late final TextComponent _componentCounter;
   late final TextComponent _scoreText;
   final Background background = Background();
-  final enemySpawnRate = 0.5;
-  double x = 0.0;
-  double y = 0.0;
+  double enemySpawnRate = 1;
+  double w = 0.0;
+  double s = 0.0;
+  double a = 0.0;
+  double d = 0.0;
   int _XP = 0;
 
   @override
@@ -62,12 +75,21 @@ class SpaceGame extends FlameGame
     add(background);
     add(parallax);
     player = PlayerShip();
+    //enemy = Enemy(position: Vector2(size.x / 4, size.y / 4));
     camera.follow(player);
     add(player);
+    addAll([
+      Enemy(position: Vector2(size.x / 4, size.y / 2)),
+      Enemy(position: Vector2(size.x / 4, size.y / 4)),
+      Enemy(position: Vector2(size.x * 3 / 4, size.y * 3 / 4)),
+      Enemy(position: Vector2(size.x / 2, size.y / 4))
+    ]);
+    //add(LineComponent(start: player.position, end: enemy.position));
     add(SpawnComponent(
       factory: (amount) => Enemy(),
+      within: false,
       period: enemySpawnRate,
-      area: Rectangle.fromLTWH(0, 0, size.x, -Enemy.enemySize),
+      area: Circle(Vector2(size.x / 2, size.y / 2), 700),
     ));
   }
 
@@ -81,31 +103,22 @@ class SpaceGame extends FlameGame
   @override
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-      x = -10;
+    super.onKeyEvent(event, keysPressed);
+    if (!isLoaded) {
+      return KeyEventResult.ignored;
     }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-      x = 10;
+    pressedKeys.clear();
+    for (final key in keysPressed) {
+      if (keys.contains(key)) {
+        pressedKeys.add(key);
+      }
     }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
-      y = -10;
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
-      y = 10;
-    }
-    if (x != 0 && y != 0) {
-      player.move(Vector2(x / sqrt(2), y / sqrt(2)));
-    } else {
-      player.move(Vector2(x, y));
-    }
-    x = 0.0;
-    y = 0.0;
-    return super.onKeyEvent(event, keysPressed);
+    return KeyEventResult.handled;
   }
 
   @override
   void onPanUpdate(DragUpdateInfo info) {
-    player.move(info.delta.global);
+    player.move2(info.delta.global);
   }
 
   void increaseXP() {
