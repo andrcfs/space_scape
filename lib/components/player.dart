@@ -19,14 +19,14 @@ class PlayerShip extends SpriteAnimationComponent
   late TimerComponent bulletCreator;
   Vector2 direction = Vector2(0, -1);
   Vector2 displacement = Vector2.zero();
-  Vector2 velocity = Vector2(1, 1);
+  Vector2 velocity = Vector2.zero();
   double attackSpeed = 1;
   double bulletSpeed = 200;
   double acc = 180;
   double limitSpeed = 125;
   double brake = 2;
   double turnSpeed = 2;
-  List<double> bulletAngles = [0.0];
+  List<double> bulletAngles = [-0.3, 0.0, 0.3];
 
   @override
   Future<void> onLoad() async {
@@ -75,11 +75,14 @@ class PlayerShip extends SpriteAnimationComponent
   void _createBullet() {
     game.addAll(
       bulletAngles.map(
-        (angle) => Bullet(
-          position: position + Vector2(0, 0),
-          speed: bulletSpeed,
-          angle: angle,
-        ),
+        (angles) {
+          return Bullet(
+            position: position + direction.scaled(size.y / 2),
+            //direction: direction,
+            speed: bulletSpeed,
+            angle: angle + angles,
+          );
+        },
       ),
     );
   }

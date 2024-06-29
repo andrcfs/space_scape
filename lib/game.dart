@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
@@ -75,7 +74,6 @@ class SpaceGame extends FlameGame
     add(background);
     add(parallax);
     player = PlayerShip();
-    //enemy = Enemy(position: Vector2(size.x / 4, size.y / 4));
     camera.follow(player);
     add(player);
     addAll([
@@ -84,13 +82,12 @@ class SpaceGame extends FlameGame
       Enemy(position: Vector2(size.x * 3 / 4, size.y * 3 / 4)),
       Enemy(position: Vector2(size.x / 2, size.y / 4))
     ]);
-    //add(LineComponent(start: player.position, end: enemy.position));
-    add(SpawnComponent(
+    /* add(SpawnComponent(
       factory: (amount) => Enemy(),
       within: false,
       period: enemySpawnRate,
       area: Circle(Vector2(size.x / 2, size.y / 2), 700),
-    ));
+    )); */
   }
 
   @override

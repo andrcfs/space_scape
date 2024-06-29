@@ -27,7 +27,7 @@ class Enemy extends SpriteAnimationComponent
   Vector2 direction = Vector2(0, 1);
   double turnSpeed = 1.5;
 
-  int xpDropRate = 70;
+  int xpDropRate = 50;
 
   @override
   Future<void> onLoad() async {
