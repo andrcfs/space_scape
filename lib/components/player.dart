@@ -7,7 +7,7 @@ import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/xp.dart';
-import 'package:space_scape/game.dart';
+import 'package:space_scape/space_scape.dart';
 
 class PlayerShip extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
@@ -22,11 +22,11 @@ class PlayerShip extends SpriteAnimationComponent
   Vector2 velocity = Vector2.zero();
   double attackSpeed = 1;
   double bulletSpeed = 200;
-  double acc = 180;
-  double limitSpeed = 125;
+  double acc = 50;
+  double maxSpeed = 65;
   double brake = 2;
   double turnSpeed = 2;
-  List<double> bulletAngles = [-0.3, 0.0, 0.3];
+  List<double> bulletAngles = [0.0];
 
   @override
   Future<void> onLoad() async {
@@ -118,8 +118,8 @@ class PlayerShip extends SpriteAnimationComponent
         game.pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
       velocity += direction.normalized().scaled(-acc / brake) * delta;
     }
-    if (velocity.length > limitSpeed) {
-      velocity = velocity.normalized().scaled(limitSpeed);
+    if (velocity.length > maxSpeed) {
+      velocity = velocity.normalized().scaled(maxSpeed);
     }
   }
 

@@ -9,7 +9,7 @@ import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/player.dart';
 import 'package:space_scape/components/xp.dart';
-import 'package:space_scape/game.dart';
+import 'package:space_scape/space_scape.dart';
 
 class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
@@ -22,7 +22,7 @@ class Enemy extends SpriteAnimationComponent
         );
 
   static const enemySize = 25.0;
-  static const enemySpeed = 50.0;
+  static const enemySpeed = 35.0;
   late Ray2 ray;
   Vector2 direction = Vector2(0, 1);
   double turnSpeed = 1.5;

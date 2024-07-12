@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/parallax.dart';
@@ -29,12 +30,14 @@ class SpaceGame extends FlameGame
         HasCollisionDetection,
         HasPerformanceTracker {
   late PlayerShip player;
+  late CameraComponent playerCamera;
   late Enemy enemy;
   late List<LogicalKeyboardKey> pressedKeys = [];
   late final TextComponent _componentCounter;
   late final TextComponent _scoreText;
   final Background background = Background();
-  double enemySpawnRate = 1;
+
+  double enemySpawnRate = 1.5;
   double w = 0.0;
   double s = 0.0;
   double a = 0.0;
@@ -74,20 +77,23 @@ class SpaceGame extends FlameGame
     add(background);
     add(parallax);
     player = PlayerShip();
-    camera.follow(player);
     add(player);
     addAll([
-      Enemy(position: Vector2(size.x / 4, size.y / 2)),
-      Enemy(position: Vector2(size.x / 4, size.y / 4)),
-      Enemy(position: Vector2(size.x * 3 / 4, size.y * 3 / 4)),
-      Enemy(position: Vector2(size.x / 2, size.y / 4))
+      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
+      Enemy(position: Vector2(size.x + 10, -size.y / 6)),
+      Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
+      Enemy(position: Vector2(size.x / 2, size.y + 10)),
+      Enemy(position: Vector2(-10, size.y / 2 + 300)),
+      Enemy(position: Vector2(size.x / 2 + 150, -20)),
+      Enemy(position: Vector2(size.x / 2 - 300, -20)),
     ]);
-    /* add(SpawnComponent(
+
+    add(SpawnComponent(
       factory: (amount) => Enemy(),
       within: false,
       period: enemySpawnRate,
-      area: Circle(Vector2(size.x / 2, size.y / 2), 700),
-    )); */
+      area: Circle(Vector2(size.x / 2, size.y / 2), 1000),
+    ));
   }
 
   @override

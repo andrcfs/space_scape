@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:space_scape/game.dart';
+import 'package:space_scape/space_scape.dart';
 
 class Background extends SpriteComponent with HasGameReference<SpaceGame> {
   Background()

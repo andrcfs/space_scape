@@ -1,6 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:space_scape/game.dart';
+import 'package:space_scape/space_scape.dart';
 
 class XP extends SpriteComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
