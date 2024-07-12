@@ -43,8 +43,8 @@ class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
       ..scale(dt);
     position += deltaPosition;
 
-    if (position.y < 0 || position.x > game.size.x || position.x + size.x < 0) {
+    /* if (position.y < 0 || position.x > game.size.x || position.x + size.x < 0) {
       removeFromParent();
-    }
+    } */
   }
 }

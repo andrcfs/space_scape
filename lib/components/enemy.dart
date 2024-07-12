@@ -63,9 +63,9 @@ class Enemy extends SpriteAnimationComponent
     super.onCollisionStart(intersectionPoints, other);
 
     void enemyDeath() {
-      game.add(Explosion(position: position, size: Vector2.all(50)));
+      game.world.add(Explosion(position: position, size: Vector2.all(50)));
       if (Random().nextInt(100) < xpDropRate) {
-        game.add(XP(position: position));
+        game.world.add(XP(position: position));
       }
       removeFromParent();
     }

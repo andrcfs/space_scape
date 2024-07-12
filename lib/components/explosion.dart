@@ -26,5 +26,9 @@ class Explosion extends SpriteAnimationComponent
         loop: false,
       ),
     );
+    /* paint = Paint()
+      ..color = Colors.blue // This sets the tint color
+      ..colorFilter =
+          ColorFilter.mode(Colors.blue.withOpacity(0.8), BlendMode.srcIn); */
   }
 }

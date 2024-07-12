@@ -30,8 +30,10 @@ class SpaceGame extends FlameGame
         HasCollisionDetection,
         HasPerformanceTracker {
   late PlayerShip player;
-  late CameraComponent playerCamera;
   late Enemy enemy;
+  late int enemyACap = 30;
+  late CameraComponent playerCamera;
+  late SpawnComponent spawnEnemyA;
   late List<LogicalKeyboardKey> pressedKeys = [];
   late final TextComponent _componentCounter;
   late final TextComponent _scoreText;
@@ -47,7 +49,48 @@ class SpaceGame extends FlameGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    addAll([
+
+    final parallax = await loadParallaxComponent(
+      [
+        ParallaxImageData('stars_0.png'),
+        ParallaxImageData('stars_1.png'),
+        ParallaxImageData('stars_2.png'),
+      ],
+      baseVelocity: Vector2(0, 0),
+      repeat: ImageRepeat.repeat,
+      velocityMultiplierDelta: Vector2(0, 2),
+    );
+
+    world.add(parallax);
+    player = PlayerShip();
+    enemy = Enemy();
+    world.add(player);
+
+    //ENEMY SPAWN
+    world.addAll([
+      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
+      Enemy(position: Vector2(size.x + 10, -size.y / 6)),
+      Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
+      Enemy(position: Vector2(size.x / 2, size.y + 10)),
+      Enemy(position: Vector2(-10, size.y / 2 + 300)),
+      Enemy(position: Vector2(size.x / 2 + 150, -20)),
+      Enemy(position: Vector2(size.x / 2 - 300, -20)),
+    ]);
+    spawnEnemyA = SpawnComponent(
+      factory: (amount) => Enemy(),
+      within: false,
+      period: enemySpawnRate,
+      area: Circle(
+          Vector2(camera.viewport.virtualSize.x / 2,
+              camera.viewport.virtualSize.y / 2),
+          1000),
+    );
+    world.add(spawnEnemyA);
+
+    //CAMERA AND UI
+    camera.backdrop = background;
+    camera.follow(player);
+    camera.viewport.addAll([
       FpsTextComponent(
         position: size - Vector2(0, 50),
         anchor: Anchor.bottomRight,
@@ -63,44 +106,21 @@ class SpaceGame extends FlameGame
         priority: 1,
       ),
     ]);
-
-    final parallax = await loadParallaxComponent(
-      [
-        ParallaxImageData('stars_0.png'),
-        ParallaxImageData('stars_1.png'),
-        ParallaxImageData('stars_2.png'),
-      ],
-      baseVelocity: Vector2(0, -5),
-      repeat: ImageRepeat.repeat,
-      velocityMultiplierDelta: Vector2(0, 2),
-    );
-    add(background);
-    add(parallax);
-    player = PlayerShip();
-    add(player);
-    addAll([
-      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
-      Enemy(position: Vector2(size.x + 10, -size.y / 6)),
-      Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
-      Enemy(position: Vector2(size.x / 2, size.y + 10)),
-      Enemy(position: Vector2(-10, size.y / 2 + 300)),
-      Enemy(position: Vector2(size.x / 2 + 150, -20)),
-      Enemy(position: Vector2(size.x / 2 - 300, -20)),
-    ]);
-
-    add(SpawnComponent(
-      factory: (amount) => Enemy(),
-      within: false,
-      period: enemySpawnRate,
-      area: Circle(Vector2(size.x / 2, size.y / 2), 1000),
-    ));
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+    int enemyCount = world.children.whereType<Enemy>().length;
     _scoreText.text = 'XP: $_XP';
-    _componentCounter.text = 'Components: ${children.length}';
+    _componentCounter.text = 'Enemies: $enemyCount';
+    if (enemyCount > enemyACap) {
+      spawnEnemyA.period = 10;
+    } else {
+      spawnEnemyA.period = enemySpawnRate;
+    }
+    spawnEnemyA.area =
+        Circle(Vector2(player.position.x, player.position.y), 1000);
   }
 
   @override

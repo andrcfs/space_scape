@@ -73,12 +73,11 @@ class PlayerShip extends SpriteAnimationComponent
   }
 
   void _createBullet() {
-    game.addAll(
+    game.world.addAll(
       bulletAngles.map(
         (angles) {
           return Bullet(
             position: position + direction.scaled(size.y / 2),
-            //direction: direction,
             speed: bulletSpeed,
             angle: angle + angles,
           );
@@ -88,7 +87,7 @@ class PlayerShip extends SpriteAnimationComponent
   }
 
   void takeHit() {
-    game.add(Explosion(position: position, size: Vector2.all(20)));
+    game.world.add(Explosion(position: position, size: Vector2.all(20)));
   }
 
   void rotate(double delta) {
