@@ -7,7 +7,7 @@ import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/xp.dart';
-import 'package:space_scape/space_scape.dart';
+import 'package:space_scape/space_game.dart';
 
 class PlayerShip extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
@@ -46,7 +46,7 @@ class PlayerShip extends SpriteAnimationComponent
       bulletCreator = TimerComponent(
         period: 1 / attackSpeed,
         repeat: true,
-        autoStart: true,
+        autoStart: false,
         onTick: _createBullet,
       ),
     );

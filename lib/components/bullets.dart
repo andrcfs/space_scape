@@ -1,6 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:space_scape/space_scape.dart';
+import 'package:space_scape/space_game.dart';
 
 class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
   Bullet({
