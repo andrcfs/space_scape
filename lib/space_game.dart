@@ -102,7 +102,7 @@ class SpaceGame extends FlameGame
       _updateTimer = 0.0;
       if (enemyCount >= enemyACap) {
         spawnEnemyA.timer.stop();
-      } else if (!spawnEnemyA.timer.isRunning()) {
+      } else if (!spawnEnemyA.timer.isRunning() && !gameOver) {
         spawnEnemyA.timer.start();
       }
       spawnEnemyA.area =
