@@ -114,15 +114,20 @@ class SpaceGame extends FlameGame
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     super.onKeyEvent(event, keysPressed);
-    if (!isLoaded) {
+    if (!isLoaded || gameOver) {
       return KeyEventResult.ignored;
     }
-    if (paused) {
-      return KeyEventResult.ignored;
+    if (event.logicalKey == LogicalKeyboardKey.escape &&
+        event is KeyDownEvent) {
+      if (overlays.isActive('PauseMenu')) {
+        overlays.remove('PauseMenu');
+      } else {
+        overlays.add('PauseMenu');
+      }
+      paused = !paused;
+      return KeyEventResult.handled;
     }
-    if (gameOver) {
-      return KeyEventResult.ignored;
-    }
+
     pressedKeys.clear();
     for (final key in keysPressed) {
       if (keys.contains(key)) {
@@ -148,6 +153,8 @@ class SpaceGame extends FlameGame
     player.bulletCreator.timer.start();
     world.addAll([
       Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
+      Enemy(position: Vector2(size.x - 150, size.y - 150)),
+      Enemy(position: Vector2(size.x - 90, size.y - 90)),
       Enemy(position: Vector2(size.x + 10, -size.y / 6)),
       Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
       Enemy(position: Vector2(size.x / 2, size.y + 10)),

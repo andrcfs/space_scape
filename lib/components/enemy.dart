@@ -22,9 +22,14 @@ class Enemy extends SpriteAnimationComponent
         );
 
   static const enemySize = 25.0;
-  static const enemySpeed = 37.0;
+  static const enemySpeed = 35.0;
+  late final RectangleHitbox hitbox;
+  late final RectangleHitbox body;
   late Ray2 ray;
+  double _updateTimer = 0.0;
+  final double _updateInterval = .01;
   Vector2 direction = Vector2(0, 1);
+  Vector2 collisionVector = Vector2(0, 0);
   double turnSpeed = 1.5;
 
   int xpDropRate = 50;
@@ -32,7 +37,11 @@ class Enemy extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(RectangleHitbox(collisionType: CollisionType.passive));
+    hitbox = RectangleHitbox(collisionType: CollisionType.passive);
+    body = RectangleHitbox(position: size / 4, size: size / 2, isSolid: true);
+
+    add(hitbox);
+    add(body..debugColor = Colors.red);
     animation = await game.loadSpriteAnimation(
       'enemy.png',
       SpriteAnimationData.sequenced(
@@ -47,12 +56,31 @@ class Enemy extends SpriteAnimationComponent
   @override
   void update(double dt) {
     super.update(dt);
-    var playerDirection = game.player.position - position;
-    if (playerDirection.angleToSigned(direction).abs() > 0.1) {
-      changeDirection(playerDirection.angleToSigned(direction), dt);
+    _updateTimer += dt;
+    if (_updateTimer >= _updateInterval) {
+      _updateTimer = 0.0;
+      var playerDirection = game.player.position - position;
+      if (playerDirection.angleToSigned(direction).abs() > 0.1) {
+        changeDirection(playerDirection.angleToSigned(direction), dt);
+      }
+      Vector2 perpendicular = Vector2(-direction.y, direction.x);
+      if (collisionVector.angleToSigned(direction) > 0) {
+        position += perpendicular * 0.1;
+      } else {
+        position -= perpendicular * 0.1;
+      }
     }
-    direction = Vector2(0, 1)..rotate(angle);
     position += direction * dt * enemySpeed;
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Enemy) {
+      if (other.body.isColliding) {
+        collisionVector = intersectionPoints.first - position;
+      }
+    }
+    super.onCollision(intersectionPoints, other);
   }
 
   @override
@@ -62,14 +90,6 @@ class Enemy extends SpriteAnimationComponent
   ) {
     super.onCollisionStart(intersectionPoints, other);
 
-    void enemyDeath() {
-      game.world.add(Explosion(position: position, size: Vector2.all(50)));
-      if (Random().nextInt(100) < xpDropRate) {
-        game.world.add(XP(position: position));
-      }
-      removeFromParent();
-    }
-
     if (other is Bullet) {
       if (other.penetration <= 1) {
         other.removeFromParent();
@@ -78,8 +98,16 @@ class Enemy extends SpriteAnimationComponent
       enemyDeath();
     }
     if (other is PlayerShip) {
-      enemyDeath();
+      //enemyDeath();
     }
+  }
+
+  void enemyDeath() {
+    game.world.add(Explosion(position: position, size: Vector2.all(50)));
+    if (Random().nextInt(100) < xpDropRate) {
+      game.world.add(XP(position: position));
+    }
+    removeFromParent();
   }
 
   void changeDirection(double angleBetween, double dt) {
@@ -89,6 +117,7 @@ class Enemy extends SpriteAnimationComponent
     if (angleBetween < 0) {
       angle += dt * turnSpeed;
     }
+    direction = Vector2(0, 1)..rotate(angle);
   }
 }
 
