@@ -38,13 +38,15 @@ class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
   @override
   void update(double dt) {
     super.update(dt);
+
     deltaPosition
       ..setFrom(velocity)
       ..scale(dt);
     position += deltaPosition;
 
-    /* if (position.y < 0 || position.x > game.size.x || position.x + size.x < 0) {
+    if (!game.camera.canSee(this)) {
+      print('AINN');
       removeFromParent();
-    } */
+    }
   }
 }

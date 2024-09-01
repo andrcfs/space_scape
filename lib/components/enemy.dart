@@ -21,7 +21,7 @@ class Enemy extends SpriteAnimationComponent
           angle: 0,
         );
 
-  static const enemySize = 25.0;
+  static const enemySize = 24.0;
   static const enemySpeed = 35.0;
   late final RectangleHitbox hitbox;
   late final RectangleHitbox body;
@@ -41,7 +41,9 @@ class Enemy extends SpriteAnimationComponent
     body = RectangleHitbox(position: size / 4, size: size / 2, isSolid: true);
 
     add(hitbox);
-    add(body..debugColor = Colors.red);
+    add(body
+      //..debugMode = true
+      ..debugColor = Colors.red);
     animation = await game.loadSpriteAnimation(
       'enemy.png',
       SpriteAnimationData.sequenced(
@@ -63,12 +65,6 @@ class Enemy extends SpriteAnimationComponent
       if (playerDirection.angleToSigned(direction).abs() > 0.1) {
         changeDirection(playerDirection.angleToSigned(direction), dt);
       }
-      Vector2 perpendicular = Vector2(-direction.y, direction.x);
-      if (collisionVector.angleToSigned(direction) > 0) {
-        position += perpendicular * 0.1;
-      } else {
-        position -= perpendicular * 0.1;
-      }
     }
     position += direction * dt * enemySpeed;
   }
@@ -76,8 +72,28 @@ class Enemy extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is Enemy) {
-      if (other.body.isColliding) {
-        collisionVector = intersectionPoints.first - position;
+      if (other.body.collidingWith(body)) {
+        collisionVector = other.position - position;
+        double test = collisionVector.angleToSigned(direction);
+
+        Vector2 perpendicular = Vector2(-direction.y, direction.x);
+        Vector2 perpColVector = collisionVector.projection(perpendicular);
+        double value =
+            -0.5 * perpColVector.length2 / (enemySize / 2 * enemySize / 2) +
+                0.5;
+        if (collisionVector.angleToSigned(direction) > 0) {
+          position += perpendicular.scaled(value.clamp(0.1, 10));
+        } else {
+          position -= perpendicular.scaled(value.clamp(0.1, 10));
+        }
+
+        //print(collisionVector.length2);
+        /* print('maoe');
+        
+        print(100 / collisionVector.length2);
+        print(perpendicular);
+        print(
+            perpendicular.scaled((100 / collisionVector.length2).clamp(1, 10))); */
       }
     }
     super.onCollision(intersectionPoints, other);
@@ -89,7 +105,25 @@ class Enemy extends SpriteAnimationComponent
     PositionComponent other,
   ) {
     super.onCollisionStart(intersectionPoints, other);
+    /* if (other is Enemy) {
+      if (other.body.collidingWith(body)) {
+        collisionVector = other.position - position;
+        Vector2 perpendicular = Vector2(-direction.y, direction.x)
+            .scaled(100 / collisionVector.length2);
 
+        perpendicular.clampScalar(1, 10);
+
+        if (collisionVector.angleToSigned(direction) > 0) {
+          position += perpendicular;
+        } else {
+          position -= perpendicular;
+        }
+        print('maoe');
+        print(collisionVector.length2);
+        print(100 / collisionVector.length2);
+        print(perpendicular);
+      }
+    } */
     if (other is Bullet) {
       if (other.penetration <= 1) {
         other.removeFromParent();

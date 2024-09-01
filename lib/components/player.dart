@@ -13,7 +13,7 @@ class PlayerShip extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
   PlayerShip()
       : super(
-          size: Vector2(1.1 * 32, 1.1 * 39),
+          size: Vector2(1 * 32, 1 * 39),
           anchor: Anchor.center,
         );
   late TimerComponent bulletCreator;

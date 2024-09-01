@@ -152,15 +152,17 @@ class SpaceGame extends FlameGame
     spawnEnemyA.timer.start();
     player.bulletCreator.timer.start();
     world.addAll([
-      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
-      Enemy(position: Vector2(size.x - 150, size.y - 150)),
-      Enemy(position: Vector2(size.x - 90, size.y - 90)),
       Enemy(position: Vector2(size.x + 10, -size.y / 6)),
+      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
       Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
       Enemy(position: Vector2(size.x / 2, size.y + 10)),
       Enemy(position: Vector2(-10, size.y / 2 + 300)),
       Enemy(position: Vector2(size.x / 2 + 150, -20)),
       Enemy(position: Vector2(size.x / 2 - 300, -20)),
+      /* Enemy(position: Vector2(size.x - 160, size.y - 150)),
+      Enemy(position: Vector2(size.x - 140, size.y - 150)),
+      Enemy(position: Vector2(size.x - 150, size.y - 150)),
+      Enemy(position: Vector2(size.x - 175, size.y - 199)), */
     ]);
   }
 }
