@@ -45,7 +45,6 @@ class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
     position += deltaPosition;
 
     if (!game.camera.canSee(this)) {
-      print('AINN');
       removeFromParent();
     }
   }

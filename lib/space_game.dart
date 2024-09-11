@@ -148,6 +148,7 @@ class SpaceGame extends FlameGame
 
   void gameStart() {
     gameOver = false;
+    overlays.add('PlayerUI');
     _xp = 0;
     spawnEnemyA.timer.start();
     player.bulletCreator.timer.start();

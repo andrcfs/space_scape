@@ -21,8 +21,10 @@ class Enemy extends SpriteAnimationComponent
           angle: 0,
         );
 
-  static const enemySize = 24.0;
-  static const enemySpeed = 35.0;
+  static const double enemySize = 24.0;
+  static const double maxHealth = 1;
+  static const double enemySpeed = 35.0;
+  static const double damage = 1;
   late final RectangleHitbox hitbox;
   late final RectangleHitbox body;
   late Ray2 ray;
@@ -74,7 +76,6 @@ class Enemy extends SpriteAnimationComponent
     if (other is Enemy) {
       if (other.body.collidingWith(body)) {
         collisionVector = other.position - position;
-        double test = collisionVector.angleToSigned(direction);
 
         Vector2 perpendicular = Vector2(-direction.y, direction.x);
         Vector2 perpColVector = collisionVector.projection(perpendicular);
@@ -86,15 +87,10 @@ class Enemy extends SpriteAnimationComponent
         } else {
           position -= perpendicular.scaled(value.clamp(0.1, 10));
         }
-
-        //print(collisionVector.length2);
-        /* print('maoe');
-        
-        print(100 / collisionVector.length2);
-        print(perpendicular);
-        print(
-            perpendicular.scaled((100 / collisionVector.length2).clamp(1, 10))); */
       }
+    }
+    if (other is PlayerShip) {
+      if (other.iTimeLeft <= 0) other.takeHit(damage);
     }
     super.onCollision(intersectionPoints, other);
   }
@@ -105,25 +101,6 @@ class Enemy extends SpriteAnimationComponent
     PositionComponent other,
   ) {
     super.onCollisionStart(intersectionPoints, other);
-    /* if (other is Enemy) {
-      if (other.body.collidingWith(body)) {
-        collisionVector = other.position - position;
-        Vector2 perpendicular = Vector2(-direction.y, direction.x)
-            .scaled(100 / collisionVector.length2);
-
-        perpendicular.clampScalar(1, 10);
-
-        if (collisionVector.angleToSigned(direction) > 0) {
-          position += perpendicular;
-        } else {
-          position -= perpendicular;
-        }
-        print('maoe');
-        print(collisionVector.length2);
-        print(100 / collisionVector.length2);
-        print(perpendicular);
-      }
-    } */
     if (other is Bullet) {
       if (other.penetration <= 1) {
         other.removeFromParent();

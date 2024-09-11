@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:space_scape/components/bullets.dart';
-import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/xp.dart';
 import 'package:space_scape/space_game.dart';
@@ -17,13 +17,24 @@ class PlayerShip extends SpriteAnimationComponent
           anchor: Anchor.center,
         );
   late TimerComponent bulletCreator;
+  static const double maxHealth = 100;
+  static const double maxShield = 10;
+  static const double iTime = 0.1;
+  static const double regenCooldown = 10;
+
+  ValueNotifier<double> health = ValueNotifier<double>(maxHealth);
+  ValueNotifier<double> shield = ValueNotifier<double>(maxShield);
   Vector2 direction = Vector2(0, -1);
   Vector2 displacement = Vector2.zero();
   Vector2 velocity = Vector2.zero();
+
+  double iTimeLeft = 0;
+  double regenAmount = 1;
+  double regenCurrent = 0;
   double attackSpeed = 1;
   double bulletSpeed = 200;
-  double acc = 50;
-  double maxSpeed = 65;
+  double acc = 65;
+  double maxSpeed = 75;
   double brake = 2;
   double turnSpeed = 2;
   List<double> bulletAngles = [0.0];
@@ -55,9 +66,6 @@ class PlayerShip extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is Enemy) {
-      takeHit();
-    }
     if (other is XP) {
       game.increaseXP();
       other.removeFromParent();
@@ -67,9 +75,21 @@ class PlayerShip extends SpriteAnimationComponent
   @override
   void update(double dt) {
     super.update(dt);
+    if (game.gameOver) return;
     direction = Vector2(0, -1)..rotate(angle);
     rotate(dt);
     move(dt);
+    if (iTimeLeft > 0) iTimeLeft -= dt;
+    if (regenCurrent > 0) regenCurrent -= dt;
+    print(regenCurrent);
+    if (regenCurrent <= 0 && shield.value < maxShield) {
+      shield.value = (shield.value + dt).clamp(0, maxShield);
+    }
+    if (health.value <= 0) {
+      print('Game Over');
+      game.gameOver = true;
+      velocity = Vector2.zero();
+    }
   }
 
   void _createBullet() {
@@ -86,8 +106,18 @@ class PlayerShip extends SpriteAnimationComponent
     );
   }
 
-  void takeHit() {
-    game.world.add(Explosion(position: position, size: Vector2.all(20)));
+  void takeHit(double damage) {
+    if (shield.value > 0) {
+      iTimeLeft = iTime;
+      regenCurrent = regenCooldown;
+      shield.value = (shield.value - damage).clamp(0, maxShield);
+      print(shield.value);
+    } else {
+      iTimeLeft = iTime;
+      game.world.add(Explosion(position: position, size: Vector2.all(20)));
+      health.value = (health.value - damage).clamp(0, maxHealth);
+      print(health.value);
+    }
   }
 
   void rotate(double delta) {
@@ -105,7 +135,6 @@ class PlayerShip extends SpriteAnimationComponent
     acceleration(delta);
     displacement = velocity * delta;
     position += displacement;
-    //displacement =  direction.normalized().scaled(velocity) * delta;
   }
 
   void acceleration(double delta) {
