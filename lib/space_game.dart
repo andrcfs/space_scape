@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/xp.dart';
 
 final List<LogicalKeyboardKey> keys = [
   LogicalKeyboardKey.arrowUp,
@@ -153,6 +154,7 @@ class SpaceGame extends FlameGame
     spawnEnemyA.timer.start();
     player.bulletCreator.timer.start();
     world.addAll([
+      XP(position: Vector2(size.x * 0.4, size.y / 2)),
       Enemy(position: Vector2(size.x + 10, -size.y / 6)),
       Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
       Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),

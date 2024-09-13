@@ -10,12 +10,29 @@ class XP extends SpriteComponent
           anchor: Anchor.center,
         );
   final image = 'xpdrop.png';
+  late final CircleHitbox hitbox;
+  bool startMoving = false;
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(CircleHitbox(collisionType: CollisionType.passive));
+    hitbox = CircleHitbox(collisionType: CollisionType.passive);
+    add(hitbox);
     sprite = await game.loadSprite(
       image,
     );
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    Vector2 direction = game.player.position - position;
+    if (startMoving) {
+      direction.normalize();
+      position += direction * dt * 200;
+    }
+  }
+
+  void moveToPlayer() {
+    startMoving = true;
   }
 }

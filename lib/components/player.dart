@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:space_scape/components/bullets.dart';
+import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/xp.dart';
 import 'package:space_scape/space_game.dart';
@@ -16,6 +17,8 @@ class PlayerShip extends SpriteAnimationComponent
           size: Vector2(1 * 32, 1 * 39),
           anchor: Anchor.center,
         );
+  late final CircleHitbox collectRadiusHitbox;
+  late final RectangleHitbox body;
   late TimerComponent bulletCreator;
   static const double maxHealth = 100;
   static const double maxShield = 10;
@@ -37,13 +40,23 @@ class PlayerShip extends SpriteAnimationComponent
   double maxSpeed = 75;
   double brake = 2;
   double turnSpeed = 2;
+  //double collectRadius = 40;
   List<double> bulletAngles = [0.0];
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     position = game.size / 2;
-    add(RectangleHitbox());
+    body = RectangleHitbox();
+    add(body);
+
+    collectRadiusHitbox = CircleHitbox(
+        radius: size.x * 3,
+        position: -Vector2(size.x * 2.5, size.y * 2),
+        isSolid: true) //-size * 4 / 2
+      ..debugMode = true
+      ..debugColor = Colors.blue.withOpacity(0.5);
+    add(collectRadiusHitbox);
 
     animation = await game.loadSpriteAnimation(
       'player.png',
@@ -66,9 +79,22 @@ class PlayerShip extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
+    if (other is Enemy && body.collidingWith(other.hitbox)) {
+      if (iTimeLeft <= 0) takeHit(Enemy.damage);
+    }
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
     if (other is XP) {
-      game.increaseXP();
-      other.removeFromParent();
+      if (game.gameOver) return;
+      other.moveToPlayer();
+      if (body.collidingWith(other.hitbox)) {
+        game.increaseXP();
+        other.removeFromParent();
+      }
     }
   }
 
@@ -81,7 +107,6 @@ class PlayerShip extends SpriteAnimationComponent
     move(dt);
     if (iTimeLeft > 0) iTimeLeft -= dt;
     if (regenCurrent > 0) regenCurrent -= dt;
-    print(regenCurrent);
     if (regenCurrent <= 0 && shield.value < maxShield) {
       shield.value = (shield.value + dt).clamp(0, maxShield);
     }
@@ -111,12 +136,10 @@ class PlayerShip extends SpriteAnimationComponent
       iTimeLeft = iTime;
       regenCurrent = regenCooldown;
       shield.value = (shield.value - damage).clamp(0, maxShield);
-      print(shield.value);
     } else {
       iTimeLeft = iTime;
       game.world.add(Explosion(position: position, size: Vector2.all(20)));
       health.value = (health.value - damage).clamp(0, maxHealth);
-      print(health.value);
     }
   }
 

@@ -89,9 +89,7 @@ class Enemy extends SpriteAnimationComponent
         }
       }
     }
-    if (other is PlayerShip) {
-      if (other.iTimeLeft <= 0) other.takeHit(damage);
-    }
+
     super.onCollision(intersectionPoints, other);
   }
 
