@@ -40,7 +40,7 @@ class PlayerShip extends SpriteAnimationComponent
   double maxSpeed = 75;
   double brake = 2;
   double turnSpeed = 2;
-  //double collectRadius = 40;
+  double collectRadius = 40;
   List<double> bulletAngles = [0.0];
 
   @override
@@ -51,8 +51,9 @@ class PlayerShip extends SpriteAnimationComponent
     add(body);
 
     collectRadiusHitbox = CircleHitbox(
-        radius: size.x * 3,
-        position: -Vector2(size.x * 2.5, size.y * 2),
+        radius: collectRadius,
+        position: -Vector2(
+            collectRadius - size.x * 0.5, collectRadius - size.y * 0.5),
         isSolid: true) //-size * 4 / 2
       ..debugMode = true
       ..debugColor = Colors.blue.withOpacity(0.5);
