@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
+import 'package:space_scape/components/level_system.dart';
 import 'package:space_scape/components/xp.dart';
 import 'package:space_scape/space_game.dart';
 
@@ -19,21 +20,26 @@ class PlayerShip extends SpriteAnimationComponent
         );
   late final CircleHitbox collectRadiusHitbox;
   late final RectangleHitbox body;
-  late TimerComponent bulletCreator;
-  static const double maxHealth = 100;
-  static const double maxShield = 10;
-  static const double iTime = 0.1;
-  static const double regenCooldown = 10;
+  late final LevelSystem levelSystem;
 
-  ValueNotifier<double> health = ValueNotifier<double>(maxHealth);
-  ValueNotifier<double> shield = ValueNotifier<double>(maxShield);
+  late TimerComponent bulletCreator;
+
+  static const double iTime = 0.1;
+
+  ValueNotifier<double> health = ValueNotifier<double>(100);
+  ValueNotifier<double> shield = ValueNotifier<double>(0);
+
   Vector2 direction = Vector2(0, -1);
   Vector2 displacement = Vector2.zero();
   Vector2 velocity = Vector2.zero();
 
   double iTimeLeft = 0;
+  double maxHealth = 100;
+  double maxShield = 0;
+
   double regenAmount = 1;
-  double regenCurrent = 0;
+  double shieldRegenCooldown = 10;
+  double shieldRegenCurrent = 0;
   double attackSpeed = 1;
   double bulletSpeed = 200;
   double acc = 65;
@@ -41,21 +47,23 @@ class PlayerShip extends SpriteAnimationComponent
   double brake = 2;
   double turnSpeed = 2;
   double collectRadius = 40;
+
+  List<String> weapons = ['BasicShot'];
   List<double> bulletAngles = [0.0];
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+    levelSystem = LevelSystem(this);
+    add(levelSystem);
     position = game.size / 2;
-    body = RectangleHitbox();
+    body = RectangleHitbox(isSolid: true);
     add(body);
-
     collectRadiusHitbox = CircleHitbox(
         radius: collectRadius,
         position: -Vector2(
             collectRadius - size.x * 0.5, collectRadius - size.y * 0.5),
-        isSolid: true) //-size * 4 / 2
-      ..debugMode = true
+        isSolid: true)
+      //..debugMode = true
       ..debugColor = Colors.blue.withOpacity(0.5);
     add(collectRadiusHitbox);
 
@@ -75,6 +83,7 @@ class PlayerShip extends SpriteAnimationComponent
         onTick: _createBullet,
       ),
     );
+    await super.onLoad();
   }
 
   @override
@@ -93,7 +102,8 @@ class PlayerShip extends SpriteAnimationComponent
       if (game.gameOver) return;
       other.moveToPlayer();
       if (body.collidingWith(other.hitbox)) {
-        game.increaseXP();
+        levelSystem.addXP(1);
+        game.xp = levelSystem.currentXP;
         other.removeFromParent();
       }
     }
@@ -107,8 +117,8 @@ class PlayerShip extends SpriteAnimationComponent
     rotate(dt);
     move(dt);
     if (iTimeLeft > 0) iTimeLeft -= dt;
-    if (regenCurrent > 0) regenCurrent -= dt;
-    if (regenCurrent <= 0 && shield.value < maxShield) {
+    if (shieldRegenCurrent > 0) shieldRegenCurrent -= dt;
+    if (shieldRegenCurrent <= 0 && shield.value < maxShield) {
       shield.value = (shield.value + dt).clamp(0, maxShield);
     }
     if (health.value <= 0) {
@@ -135,7 +145,7 @@ class PlayerShip extends SpriteAnimationComponent
   void takeHit(double damage) {
     if (shield.value > 0) {
       iTimeLeft = iTime;
-      regenCurrent = regenCooldown;
+      shieldRegenCurrent = shieldRegenCooldown;
       shield.value = (shield.value - damage).clamp(0, maxShield);
     } else {
       iTimeLeft = iTime;

@@ -37,6 +37,7 @@ class SpaceGame extends FlameGame
   late List<LogicalKeyboardKey> pressedKeys = [];
   late final TextComponent _componentCounter;
   late final TextComponent _scoreText;
+  late final TextComponent _lvlText;
   late SpawnComponent spawnEnemyA;
 
   final double _updateInterval = .1;
@@ -48,7 +49,7 @@ class SpaceGame extends FlameGame
   double a = 0.0;
   double d = 0.0;
   int enemyCount = 0;
-  int _xp = 0;
+  int xp = 0;
 
   @override
   Future<void> onLoad() async {
@@ -62,10 +63,16 @@ class SpaceGame extends FlameGame
     camera.follow(player);
     camera.viewport.addAll([
       FpsTextComponent(
-        position: size - Vector2(0, 50),
+        position: size - Vector2(0, 75),
         anchor: Anchor.bottomRight,
       ),
+      _lvlText = TextComponent(
+        position: size - Vector2(0, 50),
+        anchor: Anchor.bottomRight,
+        priority: 1,
+      ),
       _scoreText = TextComponent(
+        text: 'XP: $xp',
         position: size - Vector2(0, 25),
         anchor: Anchor.bottomRight,
         priority: 1,
@@ -96,7 +103,8 @@ class SpaceGame extends FlameGame
   void update(double dt) {
     super.update(dt);
     enemyCount = world.children.whereType<Enemy>().length;
-    _scoreText.text = 'XP: $_xp';
+    _scoreText.text = 'XP: $xp';
+    _lvlText.text = 'Level: ${player.levelSystem.currentLevel}';
     _componentCounter.text = 'Enemies: $enemyCount';
     _updateTimer += dt;
     if (_updateTimer >= _updateInterval) {
@@ -143,14 +151,10 @@ class SpaceGame extends FlameGame
     player.move2(info.delta.global);
   }
 
-  void increaseXP() {
-    _xp++;
-  }
-
   void gameStart() {
     gameOver = false;
     overlays.add('PlayerUI');
-    _xp = 0;
+    xp = 0;
     spawnEnemyA.timer.start();
     player.bulletCreator.timer.start();
     world.addAll([

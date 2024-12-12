@@ -4,6 +4,7 @@ import 'package:space_scape/maps/map1.dart';
 import 'package:space_scape/overlays/hud.dart';
 import 'package:space_scape/overlays/menu.dart';
 import 'package:space_scape/overlays/pause_menu.dart';
+import 'package:space_scape/overlays/upgrade_menu.dart';
 import 'package:space_scape/space_game.dart';
 
 class SpaceGameWidget extends StatelessWidget {
@@ -27,6 +28,7 @@ class SpaceGameWidget extends StatelessWidget {
           //'EndScreen': (_, __) => EndScreen(game),
           'PauseMenu': (_, game) => PauseMenu(game),
           'PlayerUI': (_, game) => HUD(game),
+          'UpgradeMenu': (_, game) => UpgradeMenu(game),
           //'GameStats': (_, __) => GameStatsWidget(game),
         },
         initialActiveOverlays: const ['Menu'],

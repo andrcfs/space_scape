@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:space_scape/components/player.dart';
 import 'package:space_scape/space_game.dart';
 
 class HUD extends StatelessWidget {
@@ -26,23 +25,25 @@ class HUD extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           child: Stack(
             children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return ValueListenableBuilder(
-                    valueListenable: game.player.shield,
-                    builder: (context, value, child) {
-                      return Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                            borderRadius: BorderRadius.circular(10)),
-                        width:
-                            value / PlayerShip.maxShield * constraints.maxWidth,
-                      );
-                    },
-                  );
-                },
-              ),
+              if (game.player.maxShield > 0)
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return ValueListenableBuilder(
+                      valueListenable: game.player.shield,
+                      builder: (context, value, child) {
+                        return Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                              color: Colors.blueGrey,
+                              borderRadius: BorderRadius.circular(10)),
+                          width: value /
+                              game.player.maxShield *
+                              constraints.maxWidth,
+                        );
+                      },
+                    );
+                  },
+                ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ValueListenableBuilder(
@@ -55,7 +56,7 @@ class HUD extends StatelessWidget {
                             color: Colors.red.withOpacity(0.8),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          width: (200 - 16) * health / PlayerShip.maxHealth,
+                          width: (200 - 16) * health / game.player.maxHealth,
                         ),
                         Center(
                           child: Text(
