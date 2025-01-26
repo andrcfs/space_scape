@@ -52,6 +52,10 @@ class SpaceGame extends FlameGame
   int enemyCount = 0;
   int xp = 0;
 
+  bool isEnemyMovementEnabled = false;
+  bool isEnemySpawnEnabled = false;
+  bool isPlayerWeaponEnabled = false;
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -153,22 +157,25 @@ class SpaceGame extends FlameGame
   }
 
   void toggleEnemyMovement() {
-    Enemy.hasMovement = !Enemy.hasMovement;
+    isEnemyMovementEnabled = !isEnemyMovementEnabled;
+    Enemy.hasMovement = isEnemyMovementEnabled;
   }
 
   void togglePlayerWeapon() {
-    if (player.bulletCreator.timer.isRunning()) {
-      player.bulletCreator.timer.stop();
-    } else {
+    isPlayerWeaponEnabled = !isPlayerWeaponEnabled;
+    if (isPlayerWeaponEnabled) {
       player.bulletCreator.timer.start();
+    } else {
+      player.bulletCreator.timer.stop();
     }
   }
 
   void toggleEnemySpawn() {
-    if (spawnEnemyA.timer.isRunning()) {
-      spawnEnemyA.timer.stop();
-    } else {
+    isEnemySpawnEnabled = !isEnemySpawnEnabled;
+    if (isEnemySpawnEnabled) {
       spawnEnemyA.timer.start();
+    } else {
+      spawnEnemyA.timer.stop();
     }
   }
 
@@ -178,6 +185,7 @@ class SpaceGame extends FlameGame
   }
 
   void startGame() {
+    debugMode = false;
     gameOver = false;
     overlays.add('PlayerUI');
     xp = 0;

@@ -43,22 +43,61 @@ final upgradesList = [
     type: UpgradeType.weapon,
     levels: [],
   ),
-  Upgrade(name: 'Coronal Discharge', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Yamato Canon', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Seimic charge', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Plasma Canon', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Missile Launcher', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Laser Beam', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Rail Gun', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Auto-turret', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Flame Thrower', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Gauss Canon', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'Ion Canon', levels: [], type: UpgradeType.weapon),
-  Upgrade(name: 'EMP', levels: [], type: UpgradeType.active),
-  Upgrade(name: 'Nuke', levels: [], type: UpgradeType.active),
-  Upgrade(name: 'Black Hole', levels: [], type: UpgradeType.active),
-  Upgrade(name: 'Time Warp', levels: [], type: UpgradeType.active),
-  Upgrade(name: 'Teleport', levels: [], type: UpgradeType.active),
+  Upgrade(
+      name: 'Coronal Discharge',
+      levels: [],
+      type: UpgradeType
+          .weapon), //Eletric discharges around the player does AOE damage
+
+  Upgrade(
+      name: 'Seimic Charge',
+      levels: [],
+      type: UpgradeType.weapon), //A bomb that does AOE damage
+  Upgrade(
+      name: 'Missile Launcher',
+      levels: [],
+      type: UpgradeType.weapon), //Fires homing missiles
+  Upgrade(
+      name: 'Laser Beam',
+      levels: [],
+      type: UpgradeType.weapon), //A beam that does damage over time
+  Upgrade(
+      name: 'Auto-turret',
+      levels: [],
+      type: UpgradeType.weapon), //A turret that shoots at nearest enemies
+  Upgrade(
+      name: 'Flame Thrower',
+      levels: [],
+      type:
+          UpgradeType.weapon), //A flame thrower that does AOE damage over time
+  /* Upgrade(name: 'Gauss Cannon', levels: [], type: UpgradeType.weapon),
+  Upgrade(name: 'Plasma Cannon', levels: [], type: UpgradeType.weapon),
+  Upgrade(name: 'Ion Cannon', levels: [], type: UpgradeType.weapon), */
+  Upgrade(
+      name: 'Yamato Cannon',
+      levels: [],
+      type: UpgradeType.weapon), //Special charged shot that does massive damage
+  Upgrade(
+      name: 'EMP',
+      levels: [],
+      type: UpgradeType.active), //Special ability that stuns enemies
+  Upgrade(
+      name: 'Nuke',
+      levels: [],
+      type: UpgradeType.active), //Special ability that does massive damage
+  Upgrade(
+      name: 'Black Hole',
+      levels: [],
+      type: UpgradeType
+          .active), //Special ability that shoots a blackhole that sucks enemies
+  Upgrade(
+      name: 'Time Warp',
+      levels: [],
+      type: UpgradeType.active), //Special ability that slows down time
+  Upgrade(
+      name: 'Teleport',
+      levels: [],
+      type: UpgradeType.active), //Special ability that teleports the player
   Upgrade(
     name: 'Energy Shield',
     type: UpgradeType.passive,
