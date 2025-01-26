@@ -17,10 +17,18 @@ class Menu extends StatelessWidget {
             FilledButton(
                 onPressed: () {
                   game.gameOver = false;
-                  game.gameStart();
+                  game.startGame();
                   game.overlays.remove('Menu');
                 },
                 child: const Text('Start Game')),
+            const SizedBox(height: 8),
+            FilledButton(
+                onPressed: () {
+                  game.gameOver = false;
+                  game.startTest();
+                  game.overlays.remove('Menu');
+                },
+                child: const Text('Start Game Test Mode')),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: () {},

@@ -1,4 +1,3 @@
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:space_scape/space_game.dart';
 
@@ -19,13 +18,13 @@ class _PauseMenuState extends State<PauseMenu> {
         child: Container(
           padding: const EdgeInsets.all(16),
           width: MediaQuery.of(context).size.width / 4,
-          height: MediaQuery.of(context).size.height / 2.5,
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.8),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.blue, width: 2),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Row(
@@ -59,18 +58,18 @@ class _PauseMenuState extends State<PauseMenu> {
                     'Settings',
                     style: TextStyle(color: Colors.white),
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Tooltip(
+                      Tooltip(
                         message: 'Music volume',
                         child: Icon(
                           Icons.audiotrack_outlined,
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(
+                      /* SizedBox(
                         width: MediaQuery.of(context).size.width / 6.5,
                         child: Slider(
                           value: FlameAudio.bgm.audioPlayer.volume,
@@ -87,9 +86,35 @@ class _PauseMenuState extends State<PauseMenu> {
                       Text(
                         '${(FlameAudio.bgm.audioPlayer.volume * 100).round()}%',
                         style: const TextStyle(color: Colors.white),
-                      ),
+                      ), */
                     ],
                   ),
+                  if (widget.game.debugMode)
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        border: Border.all(width: 1, color: Colors.blue),
+                      ),
+                      child: Column(
+                        children: [
+                          OutlinedButton(
+                            onPressed: () => widget.game.toggleEnemyMovement(),
+                            child: const Text("Toggle Enemy Movement"),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => widget.game.toggleEnemySpawn(),
+                            child: const Text("Toggle Enemy Spawn"),
+                          ),
+                          OutlinedButton(
+                            onPressed: () => widget.game.togglePlayerWeapon(),
+                            child: const Text("Toggle Player Weapon"),
+                          ),
+                        ],
+                      ),
+                    )
                 ],
               ),
               const SizedBox(height: 20),

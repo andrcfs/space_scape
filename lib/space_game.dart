@@ -43,6 +43,7 @@ class SpaceGame extends FlameGame
   final double _updateInterval = .1;
   double _updateTimer = 0.0;
   bool gameOver = true;
+  bool isTest = false;
   double enemySpawnRate = 0.5;
   double w = 0.0;
   double s = 0.0;
@@ -151,7 +152,32 @@ class SpaceGame extends FlameGame
     player.move2(info.delta.global);
   }
 
-  void gameStart() {
+  void toggleEnemyMovement() {
+    Enemy.hasMovement = !Enemy.hasMovement;
+  }
+
+  void togglePlayerWeapon() {
+    if (player.bulletCreator.timer.isRunning()) {
+      player.bulletCreator.timer.stop();
+    } else {
+      player.bulletCreator.timer.start();
+    }
+  }
+
+  void toggleEnemySpawn() {
+    if (spawnEnemyA.timer.isRunning()) {
+      spawnEnemyA.timer.stop();
+    } else {
+      spawnEnemyA.timer.start();
+    }
+  }
+
+  void givePlayerXp() {
+    player.levelSystem.addXP(1);
+    xp = player.levelSystem.currentXP;
+  }
+
+  void startGame() {
     gameOver = false;
     overlays.add('PlayerUI');
     xp = 0;
@@ -171,5 +197,29 @@ class SpaceGame extends FlameGame
       Enemy(position: Vector2(size.x - 150, size.y - 150)),
       Enemy(position: Vector2(size.x - 175, size.y - 199)), */
     ]);
+  }
+
+  void startTest() {
+    gameOver = false;
+    isTest = true;
+    debugMode = true;
+    overlays.add('PlayerUI');
+    xp = 0;
+    world.addAll([
+      XP(
+        position: Vector2(size.x * 0.4, size.y / 2),
+      ),
+      Enemy(position: Vector2(size.x * 0.3, size.y * 0.5)),
+      Enemy(position: Vector2(-size.x * 0.3, size.y * 0.4)),
+      Enemy(position: Vector2(size.x * 0.35, size.y * 0.45)),
+      Enemy(position: Vector2(size.x * 0.37, size.y * 0.4)),
+      Enemy(position: Vector2(size.x * 0.4, size.y * 0.4)),
+      Enemy(position: Vector2(size.x * 0.3, size.y * 0.3)),
+      /* Enemy(position: Vector2(size.x - 160, size.y - 150)),
+      Enemy(position: Vector2(size.x - 140, size.y - 150)),
+      Enemy(position: Vector2(size.x - 150, size.y - 150)),
+      Enemy(position: Vector2(size.x - 175, size.y - 199)), */
+    ]);
+    Enemy.hasMovement = !Enemy.hasMovement;
   }
 }

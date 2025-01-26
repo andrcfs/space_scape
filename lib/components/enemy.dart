@@ -23,7 +23,6 @@ class Enemy extends SpriteAnimationComponent
 
   static const double enemySize = 24.0;
   static const double maxHealth = 1;
-  static const double enemySpeed = 35.0;
   static const double damage = 1;
   late final RectangleHitbox hitbox;
   late final RectangleHitbox body;
@@ -32,7 +31,9 @@ class Enemy extends SpriteAnimationComponent
   final double _updateInterval = .01;
   Vector2 direction = Vector2(0, 1);
   Vector2 collisionVector = Vector2(0, 0);
+  double enemySpeed = 35.0;
   double turnSpeed = 1.5;
+  static bool hasMovement = true;
 
   int xpDropRate = 50;
 
@@ -60,15 +61,21 @@ class Enemy extends SpriteAnimationComponent
   @override
   void update(double dt) {
     super.update(dt);
-    _updateTimer += dt;
-    if (_updateTimer >= _updateInterval) {
-      _updateTimer = 0.0;
-      var playerDirection = game.player.position - position;
-      if (playerDirection.angleToSigned(direction).abs() > 0.1) {
-        changeDirection(playerDirection.angleToSigned(direction), dt);
+    if (hasMovement) {
+      _updateTimer += dt;
+      if (_updateTimer >= _updateInterval) {
+        _updateTimer = 0.0;
+        facePlayer(dt);
       }
+      position += direction * dt * enemySpeed;
     }
-    position += direction * dt * enemySpeed;
+  }
+
+  void facePlayer(double dt) {
+    var playerDirection = game.player.position - position;
+    if (playerDirection.angleToSigned(direction).abs() > 0.1) {
+      changeDirection(playerDirection.angleToSigned(direction), dt);
+    }
   }
 
   @override
