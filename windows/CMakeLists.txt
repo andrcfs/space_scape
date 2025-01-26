@@ -1,10 +1,10 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
-project(space_survivors LANGUAGES CXX)
+project(space_scape LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
-set(BINARY_NAME "space_survivors")
+set(BINARY_NAME "space_scape")
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
@@ -31,6 +31,12 @@ set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # Use Unicode for all projects.
 add_definitions(-DUNICODE -D_UNICODE)
+add_compile_definitions(
+  WIN32_LEAN_AND_MEAN
+  NOMINMAX
+  _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+  WINRT_LEAN_AND_MEAN
+)
 
 # Compilation settings that should be applied to most targets.
 #
@@ -39,10 +45,16 @@ add_definitions(-DUNICODE -D_UNICODE)
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)
-  target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100")
+  target_compile_options(${TARGET} PRIVATE /W4 /WX /wd"4100" /wd"4996" /wd"4005")
   target_compile_options(${TARGET} PRIVATE /EHsc)
   target_compile_definitions(${TARGET} PRIVATE "_HAS_EXCEPTIONS=0")
   target_compile_definitions(${TARGET} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
+  target_compile_definitions(${TARGET} PRIVATE "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING")
+  target_compile_definitions(${TARGET} PRIVATE "WINRT_LEAN_AND_MEAN")
+  target_include_directories(${TARGET} PRIVATE 
+    "${CMAKE_CURRENT_SOURCE_DIR}/packages/Microsoft.Windows.ImplementationLibrary/include"
+    BEFORE
+  )
 endfunction()
 
 # Flutter library and tool build rules.
@@ -55,6 +67,26 @@ add_subdirectory("runner")
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
+set(CPPWINRT_USE_EXCEPTIONS_ALLOWED 1)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FI\"wil/cppwinrt.h\"")
+
+# Set audioplayers plugin specific options
+set(PLUGIN_BUNDLED_LIBRARIES)
+if(PLUGIN_BUNDLED_LIBRARIES)
+  list(APPEND PLUGIN_BUNDLED_LIBRARIES $<TARGET_FILE:audioplayers_windows_plugin>)
+  target_compile_definitions(audioplayers_windows_plugin
+    PRIVATE
+    WINRT_LEAN_AND_MEAN
+    WIN32_LEAN_AND_MEAN
+    _HAS_EXCEPTIONS=1
+  )
+  target_include_directories(audioplayers_windows_plugin
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/packages/Microsoft.Windows.ImplementationLibrary/include"
+    BEFORE
+  )
+endif()
+
 include(flutter/generated_plugins.cmake)
 
 
