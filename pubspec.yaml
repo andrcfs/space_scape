@@ -20,7 +20,6 @@ dev_dependencies:
 
 platforms:
   windows:
-    enabled: true
 
 flutter:
   assets:

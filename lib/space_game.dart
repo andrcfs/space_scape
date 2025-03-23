@@ -9,7 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/ships/basic_ship.dart';
 import 'package:space_scape/components/xp.dart';
+
+import 'components/level_system.dart';
+import 'components/weapons/weapon_system.dart';
 
 final List<LogicalKeyboardKey> keys = [
   LogicalKeyboardKey.arrowUp,
@@ -30,15 +34,20 @@ class SpaceGame extends FlameGame
         HasPerformanceTracker {
   SpaceGame({required super.world});
 
-  late PlayerShip player;
+  late Player player;
   late Enemy enemy;
   late int enemyACap = 30;
   late CameraComponent playerCamera;
+
   late List<LogicalKeyboardKey> pressedKeys = [];
   late final TextComponent _componentCounter;
   late final TextComponent _scoreText;
   late final TextComponent _lvlText;
+
+  late final WeaponSystem weaponSystem;
+  late final LevelSystem levelSystem;
   late SpawnComponent spawnEnemyA;
+  bool testSpawn = false;
 
   final double _updateInterval = .1;
   double _updateTimer = 0.0;
@@ -60,12 +69,14 @@ class SpaceGame extends FlameGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    player = PlayerShip();
-    world.add(player);
+    player = Player();
+    player.setShip(BasicShip(player));
+    weaponSystem = WeaponSystem(player);
+    levelSystem = LevelSystem(weaponSystem);
 
     //CAMERA AND UI
 
-    camera.follow(player);
+    camera.follow(player.ship);
     camera.viewport.addAll([
       FpsTextComponent(
         position: size - Vector2(0, 75),
@@ -102,6 +113,8 @@ class SpaceGame extends FlameGame
           1000),
     );
     world.add(spawnEnemyA);
+
+    world.addAll([player, levelSystem, weaponSystem]);
   }
 
   @override
@@ -109,18 +122,18 @@ class SpaceGame extends FlameGame
     super.update(dt);
     enemyCount = world.children.whereType<Enemy>().length;
     _scoreText.text = 'XP: $xp';
-    _lvlText.text = 'Level: ${player.levelSystem.currentLevel}';
+    _lvlText.text = 'Level: ${levelSystem.playerLevel}';
     _componentCounter.text = 'Enemies: $enemyCount';
     _updateTimer += dt;
     if (_updateTimer >= _updateInterval) {
       _updateTimer = 0.0;
       if (enemyCount >= enemyACap) {
         spawnEnemyA.timer.stop();
-      } else if (!spawnEnemyA.timer.isRunning() && !gameOver) {
+      } else if (!spawnEnemyA.timer.isRunning() && !gameOver && !debugMode) {
         spawnEnemyA.timer.start();
       }
       spawnEnemyA.area =
-          Circle(Vector2(player.position.x, player.position.y), 1000);
+          Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
     }
   }
 
@@ -161,14 +174,14 @@ class SpaceGame extends FlameGame
     Enemy.hasMovement = isEnemyMovementEnabled;
   }
 
-  void togglePlayerWeapon() {
+  /* void togglePlayerWeapon() {
     isPlayerWeaponEnabled = !isPlayerWeaponEnabled;
     if (isPlayerWeaponEnabled) {
       player.bulletCreator.timer.start();
     } else {
       player.bulletCreator.timer.stop();
     }
-  }
+  } */
 
   void toggleEnemySpawn() {
     isEnemySpawnEnabled = !isEnemySpawnEnabled;
@@ -180,8 +193,8 @@ class SpaceGame extends FlameGame
   }
 
   void givePlayerXp() {
-    player.levelSystem.addXP(1);
-    xp = player.levelSystem.currentXP;
+    levelSystem.addXP(1);
+    xp = levelSystem.currentXP;
   }
 
   void startGame() {
@@ -190,7 +203,6 @@ class SpaceGame extends FlameGame
     overlays.add('PlayerUI');
     xp = 0;
     spawnEnemyA.timer.start();
-    player.bulletCreator.timer.start();
     world.addAll([
       XP(position: Vector2(size.x * 0.4, size.y / 2)),
       Enemy(position: Vector2(size.x + 10, -size.y / 6)),
@@ -213,6 +225,7 @@ class SpaceGame extends FlameGame
     debugMode = true;
     overlays.add('PlayerUI');
     xp = 0;
+    spawnEnemyA.timer.stop();
     world.addAll([
       XP(
         position: Vector2(size.x * 0.4, size.y / 2),

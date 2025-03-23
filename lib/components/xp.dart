@@ -12,6 +12,7 @@ class XP extends SpriteComponent
   final image = 'xpdrop.png';
   late final CircleHitbox hitbox;
   bool startMoving = false;
+  final int speed = 200;
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -25,10 +26,10 @@ class XP extends SpriteComponent
   @override
   void update(double dt) {
     super.update(dt);
-    Vector2 direction = game.player.position - position;
     if (startMoving) {
+      Vector2 direction = game.player.ship.position - position;
       direction.normalize();
-      position += direction * dt * 200;
+      position += direction * dt * speed.toDouble();
     }
   }
 

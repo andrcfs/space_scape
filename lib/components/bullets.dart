@@ -7,15 +7,18 @@ class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
     super.position,
     super.angle,
     required this.speed,
+    required this.damage,
+    required this.penetration,
   }) : super(
           size: Vector2(6.25, 12.5),
           anchor: Anchor.center,
         );
 
   final double speed;
+  final double damage;
   late final Vector2 velocity;
   final Vector2 deltaPosition = Vector2.zero();
-  int penetration = 2;
+  int penetration;
 
   @override
   Future<void> onLoad() async {

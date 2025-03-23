@@ -72,7 +72,7 @@ class Enemy extends SpriteAnimationComponent
   }
 
   void facePlayer(double dt) {
-    var playerDirection = game.player.position - position;
+    var playerDirection = game.player.ship.position - position;
     if (playerDirection.angleToSigned(direction).abs() > 0.1) {
       changeDirection(playerDirection.angleToSigned(direction), dt);
     }
@@ -113,7 +113,7 @@ class Enemy extends SpriteAnimationComponent
       other.penetration -= 1;
       enemyDeath();
     }
-    if (other is PlayerShip) {
+    if (other is Player) {
       //enemyDeath();
     }
   }

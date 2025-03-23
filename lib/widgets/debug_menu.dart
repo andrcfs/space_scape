@@ -84,7 +84,7 @@ class _DebugMenuSectionState extends State<DebugMenuSection> {
           _buildToggleButton(
             text: "Player Weapon",
             isEnabled: widget.game.isPlayerWeaponEnabled,
-            onPressed: () => widget.game.togglePlayerWeapon(),
+            onPressed: () {}, //widget.game.togglePlayerWeapon(),
           ),
         ],
       ),
