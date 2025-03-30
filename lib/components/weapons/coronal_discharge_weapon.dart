@@ -1,4 +1,4 @@
-import 'package:space_scape/components/upgrade.dart';
+import 'package:space_scape/components/upgrade_level.dart';
 
 import 'coronal_discharge_body.dart';
 import 'weapon.dart';
@@ -6,8 +6,8 @@ import 'weapon.dart';
 class CoronalDischargeWeapon extends Weapon {
   // Area specific properties
   double _aoeRadius = 200.0;
-  double _damage = 0.5;
-  double _cooldown = 0.2;
+  double _damage = 1;
+  double _cooldown = 0.8;
 
   // Visual effect component
   late CoronalDischargeBody _coronalBody;
@@ -133,21 +133,23 @@ class CoronalDischargeWeapon extends Weapon {
   // Implement the abstract upgradeStats method
   @override
   void upgradeStats(Map<String, dynamic> stats) {
-    stats.forEach((key, value) {
-      switch (key) {
-        case 'damage':
-          _damage += value;
-          _coronalBody.damage = _damage;
-          break;
-        case 'cooldown':
-          _cooldown *= value; // Value like 0.85 for 15% reduction
-          break;
-        case 'radius':
-          _aoeRadius *= value; // Value like 1.2 for 20% increase
-          _updateVisualRadius();
-          break;
-      }
-    });
+    stats.forEach(
+      (key, value) {
+        switch (key) {
+          case 'damage':
+            _damage += value;
+            _coronalBody.damage = _damage;
+            break;
+          case 'cooldown':
+            _cooldown *= value; // Value like 0.85 for 15% reduction
+            break;
+          case 'radius':
+            _aoeRadius *= value; // Value like 1.2 for 20% increase
+            _updateVisualRadius();
+            break;
+        }
+      },
+    );
   }
 
   void _updateVisualRadius() {

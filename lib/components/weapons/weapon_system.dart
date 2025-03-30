@@ -9,22 +9,23 @@ import 'weapon.dart';
 class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   final Player player;
   final List<Weapon> activeWeapons = [];
-  final Set<Weapon> availableWeapons = {};
+  final Set<Weapon> unlockedWeapons = {};
 
   WeaponSystem(this.player);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Initialize with available weapon templates
-    _initializeAvailableWeapons();
-    // Add starting weapon based on ship type
+    // First add starting weapon based on ship type
+
+    // Then initialize other unlocked weapons
+    _initializeUnlockedWeapons();
     addWeapon(player.ship.defaultWeapon);
   }
 
-  void _initializeAvailableWeapons() {
+  void _initializeUnlockedWeapons() {
     //TODO: This should be linked to game progress. This information may be saved in a json file
-    availableWeapons.addAll([
+    final weapons = [
       BulletWeapon(player: player),
       CoronalDischargeWeapon(player: player),
       /*
@@ -35,12 +36,14 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
         offset: Vector2(0, -20),
       ), */
       // Add more weapon templates here
-    ]);
+    ];
+
+    unlockedWeapons.addAll(weapons);
   }
 
   void addWeapon(Weapon weapon) {
     activeWeapons.add(weapon);
-    // Don't add to world, add to player's ship instead
+    unlockedWeapons.removeWhere((w) => w.name == weapon.name);
     player.ship.add(weapon);
   }
 }

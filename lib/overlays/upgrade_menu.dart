@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/upgrade.dart';
+import '../components/upgrade_level.dart';
 import '../space_game.dart';
 
 class UpgradeMenu extends StatelessWidget {

@@ -1,7 +1,7 @@
 // weapons/base_weapon.dart
 import 'package:flame/components.dart';
 import 'package:space_scape/components/player.dart';
-import 'package:space_scape/components/upgrade.dart';
+import 'package:space_scape/components/upgrade_level.dart';
 import 'package:space_scape/space_game.dart';
 
 abstract class Weapon extends Component with HasGameReference<SpaceGame> {

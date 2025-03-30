@@ -1,5 +1,5 @@
 import 'package:space_scape/components/bullets.dart';
-import 'package:space_scape/components/upgrade.dart';
+import 'package:space_scape/components/upgrade_level.dart';
 
 import 'weapon.dart';
 

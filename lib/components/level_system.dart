@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:space_scape/components/weapons/weapon_system.dart';
 
 import '../space_game.dart';
-import 'upgrade.dart';
+import 'upgrade_level.dart';
 
 class LevelSystem extends Component with HasGameReference<SpaceGame> {
   final WeaponSystem weaponSystem;
@@ -60,19 +60,20 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
     List<UpgradeLevel> availableUpgrades = [];
 
     // Get all weapons from the player
-    final unactiveWeapons = weaponSystem.availableWeapons;
-    for (final weapon in unactiveWeapons) {
-      availableUpgrades.add(weapon.getActivateUpgrade());
+    if (weaponSystem.unlockedWeapons.isNotEmpty) {
+      for (final weapon in weaponSystem.unlockedWeapons) {
+        availableUpgrades.add(weapon.getActivateUpgrade());
+      }
     }
-    final activeWeapons = weaponSystem.activeWeapons;
     // For each weapon, get available upgrades for the current weapon level
-    for (final weapon in activeWeapons) {
+    for (final weapon in weaponSystem.activeWeapons) {
       if (weapon.level < 7) {
         // Only offer upgrades for weapons below max level
         availableUpgrades.add(weapon.getNextUpgrade());
       }
     }
 
+    print(availableUpgrades);
     // If no weapon upgrades available, offer repair
     if (availableUpgrades.isEmpty) {
       availableUpgrades = [
@@ -95,7 +96,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   void applyUpgrade(UpgradeLevel upgrade) {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS e ativos
     if (upgrade.upgradeType == UpgradeType.weapon) {
-      final weapon = weaponSystem.availableWeapons.firstWhere(
+      final weapon = weaponSystem.unlockedWeapons.firstWhere(
         (element) => element.name == upgrade.name,
         orElse: () => throw Exception('Weapon ${upgrade.name} not found!'),
       );
@@ -103,6 +104,23 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
         weaponSystem.addWeapon(weapon);
       } else if (upgrade.level < 7) {
         weapon.applyUpgrade(upgrade);
+      }
+    }
+    if (upgrade.upgradeType == UpgradeType.passive) {
+      if (upgrade.statChanges.containsKey('health')) {
+        game.player.ship.health.value += upgrade.statChanges['health'];
+        if (game.player.ship.health.value > game.player.ship.maxHealth) {
+          game.player.ship.health.value = game.player.ship.maxHealth;
+        }
+      }
+      if (upgrade.statChanges.containsKey('shield')) {
+        game.player.ship.shield.value += upgrade.statChanges['shield'];
+        if (game.player.ship.shield.value > game.player.ship.maxShield) {
+          game.player.ship.shield.value = game.player.ship.maxShield;
+        }
+      }
+      if (upgrade.statChanges.containsKey('maxHealth')) {
+        game.player.ship.modifyMaxHealth(upgrade.statChanges['maxHealth']);
       }
     }
 

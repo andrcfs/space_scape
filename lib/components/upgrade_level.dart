@@ -50,6 +50,22 @@ class UpgradeLevel {
         case 'penetration':
           changes.add('Penetration +$value');
           break;
+        case 'radius':
+          final increase = ((value - 1.0) * 100).toInt();
+          changes.add('Area +$increase%');
+          break;
+        case 'health':
+          changes.add('Health +$value');
+          break;
+        case 'shield':
+          changes.add('Shield +$value');
+          break;
+        case 'speed':
+          changes.add('Speed +$value');
+          break;
+        case 'maxHealth':
+          changes.add('Max Health +$value');
+          break;
         default:
           changes.add('$key: $value');
       }
