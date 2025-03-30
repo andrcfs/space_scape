@@ -1,15 +1,16 @@
-import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/components/upgrade.dart';
 
+import 'coronal_discharge_body.dart';
 import 'weapon.dart';
 
-class BulletWeapon extends Weapon {
-  // Bullet specific properties
-  double _bulletSpeed = 200;
-  final List<double> _bulletAngles = [0.0];
-  int _bulletPenetration = 1;
-  double _damage = 10;
-  double _cooldown = 1.0;
+class CoronalDischargeWeapon extends Weapon {
+  // Area specific properties
+  double _aoeRadius = 200.0;
+  double _damage = 0.5;
+  double _cooldown = 0.2;
+
+  // Visual effect component
+  late CoronalDischargeBody _coronalBody;
 
   // Implement abstract getters
   @override
@@ -19,13 +20,14 @@ class BulletWeapon extends Weapon {
   double get cooldown => _cooldown;
 
   @override
-  double? get speed => _bulletSpeed;
+  double? get range => _aoeRadius;
 
-  BulletWeapon({
+  CoronalDischargeWeapon({
     required super.player,
-    super.name = 'Basic Shot',
-    super.description = 'Fires bullets in the direction you\'re facing',
-    super.iconPath = 'weapons/basic_shot.png',
+    super.name = 'Coronal Discharge',
+    super.description =
+        'Creates a high voltage eletric field that discharges at nearby enemies',
+    super.iconPath = '',
     super.unlocked = true,
   }) {
     // Initialize all possible upgrades for this weapon
@@ -43,90 +45,89 @@ class BulletWeapon extends Weapon {
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Reduce weapon cooldown by 15%',
+        description: 'Increase damage by 2',
         level: 1,
         upgradeType: UpgradeType.weapon,
-        statChanges: {'cooldown': 0.85},
+        statChanges: {'damage': 2.0},
       ),
-
       // Level 2 upgrade
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Increase bullet damage by 5',
+        description: 'Increase area size by 20%',
         level: 2,
         upgradeType: UpgradeType.weapon,
-        statChanges: {'damage': 5.0},
+        statChanges: {'radius': 1.2},
       ),
-
       // Level 3 upgrade
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Reduce weapon cooldown by 15%',
+        description: 'Increase damage frequency by 15%',
         level: 3,
         upgradeType: UpgradeType.weapon,
         statChanges: {'cooldown': 0.85},
       ),
-
       // Level 4 upgrade
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Bullets penetrate enemies once',
+        description: 'Increase damage by 3',
         level: 4,
         upgradeType: UpgradeType.weapon,
-        statChanges: {'penetration': 1},
+        statChanges: {'damage': 3.0},
       ),
-
       // Level 5 upgrade
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Increase bullet speed',
+        description: 'Increase area size by 30%',
         level: 5,
         upgradeType: UpgradeType.weapon,
-        statChanges: {'bulletSpeed': 1.5},
+        statChanges: {'radius': 1.3},
       ),
-
       // Level 6 upgrade
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Increase bullet damage by 10 and attack speed',
+        description: 'Increase damage frequency by 20%',
         level: 6,
         upgradeType: UpgradeType.weapon,
-        statChanges: {'damage': 10.0, 'cooldown': 0.85},
+        statChanges: {'cooldown': 0.8},
       ),
-
       // Level 7 upgrade (final)
       UpgradeLevel(
         name: name,
         icon: iconPath,
-        description: 'Fire four bullets in a spread pattern',
+        description: 'Double damage and increase area by 20%',
         level: 7,
         upgradeType: UpgradeType.weapon,
-        statChanges: {
-          'bulletAngles': [-0.2, -0.07, 0.07, 0.2]
-        },
+        statChanges: {'damage': 5.0, 'radius': 1.2},
       ),
     ]);
   }
 
   @override
-  void fire() {
-    game.world.addAll(
-      _bulletAngles.map(
-        (angle) => Bullet(
-          position: player.ship.position +
-              player.direction.scaled(player.ship.size.y / 2),
-          speed: _bulletSpeed,
-          angle: player.ship.angle + angle,
-          damage: damage,
-          penetration: _bulletPenetration,
-        ),
-      ),
+  Future<void> onLoad() async {
+    await super.onLoad();
+
+    // Create the coronal discharge body component
+    _coronalBody = CoronalDischargeBody(
+      position: game.player.ship.size / 2, // Don't set player position here
+      radius: _aoeRadius,
+      damage: _damage,
     );
+
+    add(_coronalBody);
+  }
+
+  // No need to modify position in update, as the component hierarchy will handle it
+  // Since the weapon is a child of the ship, and the body is a child of the weapon
+
+  @override
+  void fire() {
+    print("atirou");
+    _coronalBody.applyDamage();
   }
 
   // Implement the abstract upgradeStats method
@@ -136,20 +137,21 @@ class BulletWeapon extends Weapon {
       switch (key) {
         case 'damage':
           _damage += value;
+          _coronalBody.damage = _damage;
           break;
         case 'cooldown':
           _cooldown *= value; // Value like 0.85 for 15% reduction
           break;
-        case 'bulletSpeed':
-          _bulletSpeed *= value;
-          break;
-        case 'bulletAngles':
-          _bulletAngles.add(value as double);
-          break;
-        case 'penetration':
-          _bulletPenetration += value as int;
+        case 'radius':
+          _aoeRadius *= value; // Value like 1.2 for 20% increase
+          _updateVisualRadius();
           break;
       }
     });
+  }
+
+  void _updateVisualRadius() {
+    // Update the visual indicator when radius changes
+    _coronalBody.updateRadius(_aoeRadius);
   }
 }

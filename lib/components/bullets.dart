@@ -1,8 +1,11 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:space_scape/space_game.dart';
 
-class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
+import '../space_game.dart';
+import 'enemy.dart';
+
+class Bullet extends SpriteAnimationComponent
+    with HasGameReference<SpaceGame>, CollisionCallbacks {
   Bullet({
     super.position,
     super.angle,
@@ -36,6 +39,20 @@ class Bullet extends SpriteAnimationComponent with HasGameReference<SpaceGame> {
     velocity = Vector2(0, -1)
       ..rotate(angle)
       ..scale(speed);
+  }
+
+  @override
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
+    super.onCollisionStart(intersectionPoints, other);
+    if (other is Enemy) {
+      if (penetration <= 1) {
+        other.takeDamage(damage);
+      }
+      penetration -= 1;
+    }
   }
 
   @override

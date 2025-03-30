@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bonfire/bonfire.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
 import '../space_game.dart';
@@ -45,7 +45,7 @@ class Player extends Component with HasGameReference<SpaceGame> {
     }
 
     if (ship.health.value <= 0) {
-      print('Game Over');
+      print('Game Over'); //TODO: implement game over screen
       game.gameOver = true;
       velocity = Vector2.zero();
     }

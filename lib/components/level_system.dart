@@ -11,7 +11,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   final WeaponSystem weaponSystem;
   int _playerLevel = 1;
   int _currentXP = 0;
-  int _xpToNextLevel = 10;
+  int _xpToNextLevel = 1;
   final double _xpGrowthRate = 1.2;
 
   // Flag to track if level up is pending
@@ -95,7 +95,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   void applyUpgrade(UpgradeLevel upgrade) {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS e ativos
     if (upgrade.upgradeType == UpgradeType.weapon) {
-      final weapon = weaponSystem.activeWeapons.firstWhere(
+      final weapon = weaponSystem.availableWeapons.firstWhere(
         (element) => element.name == upgrade.name,
         orElse: () => throw Exception('Weapon ${upgrade.name} not found!'),
       );

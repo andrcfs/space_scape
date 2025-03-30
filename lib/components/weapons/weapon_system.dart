@@ -2,12 +2,14 @@ import 'package:flame/components.dart';
 import 'package:space_scape/components/player.dart';
 
 import '../../space_game.dart';
+import 'bullet_weapon.dart';
+import 'coronal_discharge_weapon.dart';
 import 'weapon.dart';
 
 class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   final Player player;
   final List<Weapon> activeWeapons = [];
-  final List<Weapon> availableWeapons = [];
+  final Set<Weapon> availableWeapons = {};
 
   WeaponSystem(this.player);
 
@@ -23,9 +25,9 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   void _initializeAvailableWeapons() {
     //TODO: This should be linked to game progress. This information may be saved in a json file
     availableWeapons.addAll([
-      //BulletWeapon(player: player),
-
-      /* AOEWeapon(player: player, radius: 100),
+      BulletWeapon(player: player),
+      CoronalDischargeWeapon(player: player),
+      /*
       TurretWeapon(
         player: player, 
         rotationSpeed: 2.0,
@@ -38,15 +40,7 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
 
   void addWeapon(Weapon weapon) {
     activeWeapons.add(weapon);
-    availableWeapons.remove(weapon);
-    add(weapon);
-  }
-
-  // Find a weapon by name from activeWeapons
-  Weapon? getWeapon(String weaponName) {
-    return activeWeapons.cast<Weapon?>().firstWhere(
-          (w) => w?.name == weaponName,
-          orElse: () => null,
-        );
+    // Don't add to world, add to player's ship instead
+    player.ship.add(weapon);
   }
 }

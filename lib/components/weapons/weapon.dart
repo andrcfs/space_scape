@@ -17,9 +17,6 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
       true; //TODO: Change to false once this feature is implemented
   double _cooldownTimer = 0;
 
-  // Each weapon needs an ID for upgrade mapping
-  final String weaponId;
-
   // List of all possible upgrades for this weapon
   final List<UpgradeLevel> _upgradeList = [];
 
@@ -43,7 +40,6 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
     required String name,
     required String description,
     required String iconPath,
-    required this.weaponId,
     bool unlocked = false,
   })  : _name = name,
         _description = description,
