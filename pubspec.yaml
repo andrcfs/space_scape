@@ -25,4 +25,8 @@ flutter:
     - assets/audio/
     - assets/images/
     - assets/tiles/
+  fonts:
+    - family: Unlearned
+      fonts:
+        - asset: assets/fonts/unlearned2.ttf
   uses-material-design: true

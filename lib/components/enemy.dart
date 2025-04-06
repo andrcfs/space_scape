@@ -29,6 +29,7 @@ abstract class Enemy extends SpriteAnimationComponent
   late double _health;
   static const double _updateInterval = .01;
   Vector2 direction = Vector2(0, 1);
+  Vector2 _playerDirection = Vector2.zero();
   Vector2 collisionVector = Vector2(0, 0);
   static bool hasMovement = true;
 
@@ -69,6 +70,7 @@ abstract class Enemy extends SpriteAnimationComponent
         _updateTimer = 0.0;
         facePlayer(dt);
       }
+      double fallbackForce = 0.0;
       if (_isTakingDamage) {
         _fallBackTime += dt;
         if (_fallBackTime >= fallBackDuration) {
@@ -76,12 +78,10 @@ abstract class Enemy extends SpriteAnimationComponent
           _fallBackTime = 0.0;
         }
 
-        double fallbackForce =
+        fallbackForce =
             _fallBackForce * (1.0 - (_fallBackTime / fallBackDuration));
-        position += -direction * dt * enemySpeed * fallbackForce;
-      } else {
-        position += direction * dt * enemySpeed;
       }
+      position += _playerDirection * dt * enemySpeed * (1 - fallbackForce);
     }
   }
 
@@ -142,9 +142,9 @@ abstract class Enemy extends SpriteAnimationComponent
   void enemyDeath();
 
   void facePlayer(double dt) {
-    var playerDirection = game.player.ship.position - position;
-    if (playerDirection.angleToSigned(direction).abs() > 0.1) {
-      changeDirection(playerDirection.angleToSigned(direction), dt);
+    _playerDirection = (game.player.ship.position - position).normalized();
+    if (_playerDirection.angleToSigned(direction).abs() > 0.1) {
+      changeDirection(_playerDirection.angleToSigned(direction), dt);
     }
   }
 

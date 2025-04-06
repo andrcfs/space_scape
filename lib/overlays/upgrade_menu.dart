@@ -107,14 +107,16 @@ class UpgradeOption extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-
-                // Upgrade description
-                Text(
-                  upgrade.description,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
+                Flexible(
+                  child: Text(
+                    upgrade.description,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
 

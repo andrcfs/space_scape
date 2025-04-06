@@ -28,7 +28,7 @@ class CoronalDischargeWeapon extends Weapon {
     super.description =
         'Creates a high voltage eletric field that discharges at nearby enemies',
     super.iconPath = '',
-    super.pushForce = 0.1,
+    super.pushForce = 1,
     super.unlocked = true,
   }) {
     // Initialize all possible upgrades for this weapon
