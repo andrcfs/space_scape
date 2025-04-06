@@ -5,6 +5,8 @@ import 'package:flame/components.dart';
 import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/space_game.dart';
 
+import 'damage_notification.dart';
+
 abstract class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
   Enemy({
@@ -18,6 +20,11 @@ abstract class Enemy extends SpriteAnimationComponent
 
   late final RectangleHitbox hitbox;
   late final RectangleHitbox body;
+  bool _isTakingDamage = false;
+  bool get isTakingDamage => _isTakingDamage;
+  double _fallBackTime = 0.0;
+  double _fallBackForce = 0.0;
+  static const double fallBackDuration = 0.5;
   double _updateTimer = 0.0;
   late double _health;
   static const double _updateInterval = .01;
@@ -36,14 +43,18 @@ abstract class Enemy extends SpriteAnimationComponent
   Future<void> onLoad() async {
     await super.onLoad();
     hitbox = RectangleHitbox(collisionType: CollisionType.passive);
-    body = RectangleHitbox(position: size / 4, size: size / 2, isSolid: true);
+    body = RectangleHitbox(
+        position: size / 4,
+        size: size / 2,
+        isSolid: true,
+        collisionType: CollisionType.active);
+    _health = maxHealth;
 
     add(hitbox);
     add(body);
 
     // Load the animation in the subclass implementation
     await loadAnimation();
-    _health = maxHealth;
   }
 
   // Abstract method for loading the specific enemy animation
@@ -58,7 +69,19 @@ abstract class Enemy extends SpriteAnimationComponent
         _updateTimer = 0.0;
         facePlayer(dt);
       }
-      position += direction * dt * enemySpeed;
+      if (_isTakingDamage) {
+        _fallBackTime += dt;
+        if (_fallBackTime >= fallBackDuration) {
+          _isTakingDamage = false;
+          _fallBackTime = 0.0;
+        }
+
+        double fallbackForce =
+            _fallBackForce * (1.0 - (_fallBackTime / fallBackDuration));
+        position += -direction * dt * enemySpeed * fallbackForce;
+      } else {
+        position += direction * dt * enemySpeed;
+      }
     }
   }
 
@@ -90,16 +113,26 @@ abstract class Enemy extends SpriteAnimationComponent
   ) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is Bullet) {
+      //Subtract penetration from the bullet
       if (other.penetration <= 1) {
         other.removeFromParent();
       }
       other.penetration -= 1;
-      enemyDeath();
     }
   }
 
-  void takeDamage(double damage) {
-    _health -= damage.toInt();
+  void takeDamage(double damage, double pushForce) {
+    if (_isTakingDamage == false) {
+      _fallBackForce = pushForce;
+      _isTakingDamage = true;
+    }
+    _health -= damage;
+    final damageNotification = DamageNotification(
+      damageAmount: damage,
+      position: center,
+    );
+    game.world.add(damageNotification);
+
     if (_health <= 0) {
       enemyDeath();
     }

@@ -8,8 +8,9 @@ import 'weapon.dart';
 
 class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   final Player player;
-  final List<Weapon> activeWeapons = [];
+  final Set<Weapon> activeWeapons = {};
   final Set<Weapon> unlockedWeapons = {};
+  final Set<Weapon> availableWeapons = {};
 
   WeaponSystem(this.player);
 
@@ -21,6 +22,8 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
     // Then initialize other unlocked weapons
     _initializeUnlockedWeapons();
     addWeapon(player.ship.defaultWeapon);
+    availableWeapons.addAll(unlockedWeapons);
+    availableWeapons.addAll(activeWeapons);
   }
 
   void _initializeUnlockedWeapons() {
@@ -42,6 +45,7 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   }
 
   void addWeapon(Weapon weapon) {
+    weapon.levelUp();
     activeWeapons.add(weapon);
     unlockedWeapons.removeWhere((w) => w.name == weapon.name);
     player.ship.add(weapon);

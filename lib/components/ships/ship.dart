@@ -109,7 +109,5 @@ abstract class Ship extends SpriteAnimationComponent
     super.update(dt);
 
     if (iTimeLeft > 0) iTimeLeft -= dt;
-
-    // Ship-specific update logic can be added in subclasses
   }
 }

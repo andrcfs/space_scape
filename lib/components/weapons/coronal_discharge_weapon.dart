@@ -28,6 +28,7 @@ class CoronalDischargeWeapon extends Weapon {
     super.description =
         'Creates a high voltage eletric field that discharges at nearby enemies',
     super.iconPath = '',
+    super.pushForce = 0.1,
     super.unlocked = true,
   }) {
     // Initialize all possible upgrades for this weapon
@@ -116,6 +117,7 @@ class CoronalDischargeWeapon extends Weapon {
       position: game.player.ship.size / 2, // Don't set player position here
       radius: _aoeRadius,
       damage: _damage,
+      pushForce: pushForce,
     );
 
     add(_coronalBody);
@@ -126,7 +128,6 @@ class CoronalDischargeWeapon extends Weapon {
 
   @override
   void fire() {
-    print("atirou");
     _coronalBody.applyDamage();
   }
 

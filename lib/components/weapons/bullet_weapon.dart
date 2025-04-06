@@ -8,7 +8,7 @@ class BulletWeapon extends Weapon {
   double _bulletSpeed = 200;
   final List<double> _bulletAngles = [0.0];
   int _bulletPenetration = 1;
-  double _damage = 10;
+  double _damage = 4.0;
   double _cooldown = 1.0;
 
   // Implement abstract getters
@@ -26,6 +26,7 @@ class BulletWeapon extends Weapon {
     super.name = 'Basic Shot',
     super.description = 'Fires bullets in the direction you\'re facing',
     super.iconPath = 'weapons/basic_shot.png',
+    super.pushForce = 3.0,
     super.unlocked = true,
   }) {
     // Initialize all possible upgrades for this weapon
@@ -123,6 +124,7 @@ class BulletWeapon extends Weapon {
           speed: _bulletSpeed,
           angle: player.ship.angle + angle,
           damage: damage,
+          pushForce: pushForce,
           penetration: _bulletPenetration,
         ),
       ),

@@ -10,8 +10,8 @@ import 'upgrade_level.dart';
 class LevelSystem extends Component with HasGameReference<SpaceGame> {
   final WeaponSystem weaponSystem;
   int _playerLevel = 1;
-  int _currentXP = 0;
-  int _xpToNextLevel = 1;
+  int _currentXP = 4;
+  int _xpToNextLevel = 5;
   final double _xpGrowthRate = 1.2;
 
   // Flag to track if level up is pending
@@ -58,34 +58,19 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   List<UpgradeLevel> getAvailableUpgrades() {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS
     List<UpgradeLevel> availableUpgrades = [];
-
-    // Get all weapons from the player
-    if (weaponSystem.unlockedWeapons.isNotEmpty) {
-      for (final weapon in weaponSystem.unlockedWeapons) {
-        availableUpgrades.add(weapon.getActivateUpgrade());
-      }
+    for (final weapon in weaponSystem.availableWeapons) {
+      availableUpgrades.add(weapon.getNextUpgrade());
     }
-    // For each weapon, get available upgrades for the current weapon level
-    for (final weapon in weaponSystem.activeWeapons) {
-      if (weapon.level < 7) {
-        // Only offer upgrades for weapons below max level
-        availableUpgrades.add(weapon.getNextUpgrade());
-      }
-    }
-
-    print(availableUpgrades);
-    // If no weapon upgrades available, offer repair
     if (availableUpgrades.isEmpty) {
-      availableUpgrades = [
-        UpgradeLevel(
-          name: 'Repair',
-          description: 'Recover health',
-          level: 0,
-          upgradeType: UpgradeType.passive,
-          icon: '',
-          statChanges: {'health': game.player.ship.maxHealth},
-        ),
-      ];
+      // If no weapon upgrades available, offer repair
+      availableUpgrades.add(UpgradeLevel(
+        name: 'Repair',
+        description: 'Recover health',
+        level: 0,
+        upgradeType: UpgradeType.passive,
+        icon: '',
+        statChanges: {'health': game.player.ship.maxHealth},
+      ));
     }
 
     // Shuffle and take up to 3
@@ -96,7 +81,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   void applyUpgrade(UpgradeLevel upgrade) {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS e ativos
     if (upgrade.upgradeType == UpgradeType.weapon) {
-      final weapon = weaponSystem.unlockedWeapons.firstWhere(
+      final weapon = weaponSystem.availableWeapons.firstWhere(
         (element) => element.name == upgrade.name,
         orElse: () => throw Exception('Weapon ${upgrade.name} not found!'),
       );
@@ -105,6 +90,8 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
       } else if (upgrade.level < 7) {
         weapon.applyUpgrade(upgrade);
       }
+      //Remove upgrade from the weapon's available upgrades
+      weapon.removeUpgrade(upgrade);
     }
     if (upgrade.upgradeType == UpgradeType.passive) {
       if (upgrade.statChanges.containsKey('health')) {

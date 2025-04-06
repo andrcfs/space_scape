@@ -11,6 +11,7 @@ class Bullet extends SpriteAnimationComponent
     super.angle,
     required this.speed,
     required this.damage,
+    required this.pushForce,
     required this.penetration,
   }) : super(
           size: Vector2(6.25, 12.5),
@@ -19,6 +20,7 @@ class Bullet extends SpriteAnimationComponent
 
   final double speed;
   final double damage;
+  final double pushForce;
   late final Vector2 velocity;
   final Vector2 deltaPosition = Vector2.zero();
   int penetration;
@@ -49,7 +51,7 @@ class Bullet extends SpriteAnimationComponent
     super.onCollisionStart(intersectionPoints, other);
     if (other is Enemy) {
       if (penetration <= 1) {
-        other.takeDamage(damage);
+        other.takeDamage(damage, pushForce);
       }
       penetration -= 1;
     }

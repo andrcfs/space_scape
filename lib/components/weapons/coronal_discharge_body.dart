@@ -6,11 +6,13 @@ import '../enemy.dart';
 
 class CoronalDischargeBody extends CircleComponent with CollisionCallbacks {
   double damage;
+  double pushForce;
   late CircleHitbox hitbox;
 
   CoronalDischargeBody({
     required double radius,
     required this.damage,
+    required this.pushForce,
     super.position,
   }) : super(
           radius: radius,
@@ -40,9 +42,11 @@ class CoronalDischargeBody extends CircleComponent with CollisionCallbacks {
   void applyDamage() {
     if (hitbox.activeCollisions.isEmpty) return;
     for (var collision in hitbox.activeCollisions) {
-      final object = collision.hitboxParent;
-      if (object is Enemy) {
-        object.takeDamage(damage);
+      if (collision.collisionType == CollisionType.passive) {
+        final object = collision.hitboxParent;
+        if (object is Enemy) {
+          object.takeDamage(damage, pushForce);
+        }
       }
     }
   }
