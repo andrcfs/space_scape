@@ -45,7 +45,7 @@ class Player extends Component with HasGameReference<SpaceGame> {
     }
 
     if (ship.health.value <= 0) {
-      print('Game Over'); //TODO: implement game over screen
+      
       game.gameOver = true;
       velocity = Vector2.zero();
     }

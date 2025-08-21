@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:space_scape/components/upgrades/upgrade.dart';
 import 'package:space_scape/components/weapons/weapon_system.dart';
 
 import '../space_game.dart';
-import 'upgrade_level.dart';
 
 class LevelSystem extends Component with HasGameReference<SpaceGame> {
   final WeaponSystem weaponSystem;
@@ -55,19 +55,17 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   }
 
   // Get available upgrades for the current level-up
-  List<UpgradeLevel> getAvailableUpgrades() {
+  List<Upgrade> getAvailableUpgrades() {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS
-    List<UpgradeLevel> availableUpgrades = [];
+    List<Upgrade> availableUpgrades = [];
     for (final weapon in weaponSystem.availableWeapons) {
       availableUpgrades.add(weapon.getNextUpgrade());
     }
     if (availableUpgrades.isEmpty) {
       // If no weapon upgrades available, offer repair
-      availableUpgrades.add(UpgradeLevel(
+      availableUpgrades.add(RepairUpgrade(
         name: 'Repair',
         description: 'Recover health',
-        level: 0,
-        upgradeType: UpgradeType.passive,
         icon: '',
         statChanges: {'health': game.player.ship.maxHealth},
       ));
@@ -78,40 +76,8 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
     return availableUpgrades.take(min(3, availableUpgrades.length)).toList();
   }
 
-  void applyUpgrade(UpgradeLevel upgrade) {
-    //TODO: IMPLEMENTAR UPGRADES PASSIVOS e ativos
-    if (upgrade.upgradeType == UpgradeType.weapon) {
-      final weapon = weaponSystem.availableWeapons.firstWhere(
-        (element) => element.name == upgrade.name,
-        orElse: () => throw Exception('Weapon ${upgrade.name} not found!'),
-      );
-      if (upgrade.level == 0) {
-        weaponSystem.addWeapon(weapon);
-      } else if (upgrade.level < 7) {
-        weapon.applyUpgrade(upgrade);
-      }
-      //Remove upgrade from the weapon's available upgrades
-      weapon.removeUpgrade(upgrade);
-    }
-    if (upgrade.upgradeType == UpgradeType.passive) {
-      if (upgrade.statChanges.containsKey('health')) {
-        game.player.ship.health.value += upgrade.statChanges['health'];
-        if (game.player.ship.health.value > game.player.ship.maxHealth) {
-          game.player.ship.health.value = game.player.ship.maxHealth;
-        }
-      }
-      if (upgrade.statChanges.containsKey('shield')) {
-        game.player.ship.shield.value += upgrade.statChanges['shield'];
-        if (game.player.ship.shield.value > game.player.ship.maxShield) {
-          game.player.ship.shield.value = game.player.ship.maxShield;
-        }
-      }
-      if (upgrade.statChanges.containsKey('maxHealth')) {
-        game.player.ship.modifyMaxHealth(upgrade.statChanges['maxHealth']);
-      }
-    }
-
-    // A ia adicionou isso e n sei se vai ser útil kkk
+  void applyUpgrade(Upgrade upgrade) {
+    upgrade.apply(game);
     _levelUpPending = false;
   }
 }

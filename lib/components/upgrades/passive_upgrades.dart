@@ -1,9 +1,9 @@
-import '../upgrade_level.dart';
+import 'upgrade.dart';
 
 // List of all available passive upgrades
-final List<UpgradeLevel> passiveUpgrades = [
+final List<Upgrade> passiveUpgrades = [
   // Energy Shield Level 1
-  UpgradeLevel(
+  PlayerStatUpgrade(
     name: 'Energy Shield',
     description: 'Unlock shield that absorbs damage.',
     level: 1,
@@ -16,7 +16,7 @@ final List<UpgradeLevel> passiveUpgrades = [
   ),
 
   // Energy Shield Level 2
-  UpgradeLevel(
+  PlayerStatUpgrade(
     name: 'Energy Shield',
     description: 'Increase shield regen and max shield.',
     level: 2,
@@ -30,7 +30,7 @@ final List<UpgradeLevel> passiveUpgrades = [
   ),
 
   // Energy Shield Level 3
-  UpgradeLevel(
+  PlayerStatUpgrade(
     name: 'Energy Shield',
     description: 'Reduce shield regeneration cooldown.',
     level: 3,
@@ -43,7 +43,7 @@ final List<UpgradeLevel> passiveUpgrades = [
   ),
 
   // Health Upgrade
-  UpgradeLevel(
+  PlayerStatUpgrade(
     name: 'Hull Reinforcement',
     description: 'Increase max health of your ship.',
     level: 1,

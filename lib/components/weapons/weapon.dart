@@ -1,7 +1,7 @@
 // weapons/base_weapon.dart
 import 'package:flame/components.dart';
 import 'package:space_scape/components/player.dart';
-import 'package:space_scape/components/upgrade_level.dart';
+import 'package:space_scape/components/upgrades/upgrade.dart';
 import 'package:space_scape/space_game.dart';
 
 abstract class Weapon extends Component with HasGameReference<SpaceGame> {
@@ -19,7 +19,7 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
   final double _pushForce;
 
   // List of all possible upgrades for this weapon
-  final List<UpgradeLevel> _upgradeList = [];
+  final List<Upgrade> _upgradeList = [];
 
   // Getters for common properties
   String get name => _name;
@@ -78,27 +78,27 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
   }
 
   // Apply upgrade to weapon and level up. Called from LevelSystem
-  void applyUpgrade(UpgradeLevel upgradeLevel) {
-    upgradeStats(upgradeLevel.statChanges);
+  void applyUpgrade(Upgrade upgrade) {
+    upgradeStats(upgrade.statChanges);
     levelUp();
   }
 
   // Initialize the possible upgrades for this weapon
-  void initUpgrades(List<UpgradeLevel> upgrades) {
+  void initUpgrades(List<Upgrade> upgrades) {
     _upgradeList.addAll(upgrades);
   }
 
-  UpgradeLevel getActivateUpgrade() {
+  Upgrade getActivateUpgrade() {
     return _upgradeList.firstWhere((upgrade) => upgrade.level == 0);
   }
 
   // Get available upgrades for this weapon at current level
-  UpgradeLevel getNextUpgrade() {
+  Upgrade getNextUpgrade() {
     return _upgradeList.firstWhere((upgrade) => upgrade.level == _level + 1);
   }
 
-  void removeUpgrade(UpgradeLevel upgradeLevel) {
-    _upgradeList.remove(upgradeLevel);
+  void removeUpgrade(Upgrade upgrade) {
+    _upgradeList.remove(upgrade);
   }
 
   // Abstract method for applying stats - to be implemented by subclasses

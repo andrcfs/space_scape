@@ -1,4 +1,4 @@
-import 'package:space_scape/components/upgrade_level.dart';
+import 'package:space_scape/components/upgrades/upgrade.dart';
 
 import 'coronal_discharge_body.dart';
 import 'weapon.dart';
@@ -34,75 +34,67 @@ class CoronalDischargeWeapon extends Weapon {
     // Initialize all possible upgrades for this weapon
     initUpgrades([
       // Level 0 for unlocking the weapon
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: description,
         level: 0,
-        upgradeType: UpgradeType.weapon,
         statChanges: {},
       ),
       // Level 1 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase damage by 2',
         level: 1,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'damage': 2.0},
       ),
       // Level 2 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase area size by 20%',
         level: 2,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'radius': 1.2},
       ),
       // Level 3 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase damage frequency by 15%',
         level: 3,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'cooldown': 0.85},
       ),
       // Level 4 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase damage by 3',
         level: 4,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'damage': 3.0},
       ),
       // Level 5 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase area size by 30%',
         level: 5,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'radius': 1.3},
       ),
       // Level 6 upgrade
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase damage frequency by 20%',
         level: 6,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'cooldown': 0.8},
       ),
       // Level 7 upgrade (final)
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Double damage and increase area by 20%',
         level: 7,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'damage': 5.0, 'radius': 1.2},
       ),
     ]);
