@@ -16,6 +16,7 @@ import 'package:space_scape/components/ships/basic_ship.dart';
 import 'package:space_scape/components/xp.dart';
 
 import 'components/level_system.dart';
+import 'components/upgrades/upgrade_manager.dart';
 import 'components/weapons/weapon_system.dart';
 
 final List<LogicalKeyboardKey> keys = [
@@ -49,6 +50,7 @@ class SpaceGame extends FlameGame
 
   late final WeaponSystem weaponSystem;
   late final LevelSystem levelSystem;
+  late final UpgradeManager upgradeManager;
   late SpawnComponent spawnEnemyA;
   bool testSpawn = false;
 
@@ -75,7 +77,8 @@ class SpaceGame extends FlameGame
     player = Player();
     player.setShip(BasicShip(player));
     weaponSystem = WeaponSystem(player);
-    levelSystem = LevelSystem(weaponSystem);
+    upgradeManager = UpgradeManager(game: this, weaponSystem: weaponSystem);
+    levelSystem = LevelSystem(upgradeManager);
 
     //CAMERA AND UI
 

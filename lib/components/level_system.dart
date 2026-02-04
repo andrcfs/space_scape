@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:space_scape/components/upgrades/upgrade.dart';
-import 'package:space_scape/components/weapons/weapon_system.dart';
+import 'package:space_scape/components/upgrades/upgrade_manager.dart';
 
 import '../space_game.dart';
 
 class LevelSystem extends Component with HasGameReference<SpaceGame> {
-  final WeaponSystem weaponSystem;
+  final UpgradeManager upgradeManager;
   int _playerLevel = 1;
   int _currentXP = 4;
   int _xpToNextLevel = 5;
@@ -21,7 +21,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   final ValueNotifier<double> xpProgress = ValueNotifier(0.0);
   final ValueNotifier<int> level = ValueNotifier(1);
 
-  LevelSystem(this.weaponSystem);
+  LevelSystem(this.upgradeManager);
 
   int get playerLevel => _playerLevel;
   int get currentXP => _currentXP;
@@ -54,22 +54,8 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
     xpProgress.value = _currentXP / _xpToNextLevel;
   }
 
-  // Get available upgrades for the current level-up
   List<Upgrade> getAvailableUpgrades() {
-    //TODO: IMPLEMENTAR UPGRADES PASSIVOS
-    List<Upgrade> availableUpgrades = [];
-    for (final weapon in weaponSystem.availableWeapons) {
-      availableUpgrades.add(weapon.getNextUpgrade());
-    }
-    if (availableUpgrades.isEmpty) {
-      // If no weapon upgrades available, offer repair
-      availableUpgrades.add(RepairUpgrade(
-        name: 'Repair',
-        description: 'Recover health',
-        icon: '',
-        statChanges: {'health': game.player.ship.maxHealth},
-      ));
-    }
+    final availableUpgrades = upgradeManager.getAvailableUpgrades(playerLevel);
 
     // Shuffle and take up to 3
     availableUpgrades.shuffle(Random());
