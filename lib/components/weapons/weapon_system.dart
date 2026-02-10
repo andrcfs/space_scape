@@ -2,6 +2,11 @@ import 'package:flame/components.dart';
 import 'package:space_scape/components/player.dart';
 
 import '../../space_game.dart';
+import 'arclightning_weapon.dart';
+import 'enemy_chaser_weapon.dart';
+import 'flares_weapon.dart';
+import 'gravpull_weapon.dart';
+import 'laserbeam_weapon.dart';
 import 'weapon.dart';
 
 class WeaponSystem extends Component with HasGameReference<SpaceGame> {
@@ -23,7 +28,11 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
   void _initializeAvailableWeapons() {
     //TODO: This should be linked to game progress. This information may be saved in a json file
     availableWeapons.addAll([
-      //BulletWeapon(player: player),
+      ArcLightningWeapon(player: player),
+      EnemyChaserWeapon(player: player),
+      FlaresWeapon(player: player),
+      GravPullWeapon(player: player),
+      LaserBeamWeapon(player: player),
 
       /* AOEWeapon(player: player, radius: 100),
       TurretWeapon(

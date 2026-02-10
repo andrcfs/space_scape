@@ -15,15 +15,36 @@ class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
   Enemy({
     super.position,
-  }) : super(
-          size: Vector2.all(enemySize),
+    Vector2? size,
+    this.maxHealth = defaultMaxHealth,
+    this.spritePath = 'enemy.png',
+    this.frameCount = 4,
+    Vector2? frameSize,
+    Vector2? bodySizeFactor,
+    Vector2? bodyOffsetFactor,
+  })  : enemySize = size ?? Vector2.all(defaultEnemySize),
+        frameSize = frameSize ?? Vector2.all(defaultFrameSize),
+        bodySizeFactor = bodySizeFactor ?? Vector2.all(0.5),
+        bodyOffsetFactor = bodyOffsetFactor ?? Vector2.all(0.25),
+        super(
+          size: size ?? Vector2.all(defaultEnemySize),
           anchor: Anchor.center,
           angle: 0,
         );
 
-  static const double enemySize = 24.0;
-  static const double maxHealth = 1;
+  static const double defaultEnemySize = 24.0;
+  static const double defaultFrameSize = 16.0;
+  static const double defaultMaxHealth = 1;
   static const double damage = 1;
+
+  final Vector2 enemySize;
+  final double maxHealth;
+  final String spritePath;
+  final int frameCount;
+  final Vector2 frameSize;
+  final Vector2 bodySizeFactor;
+  final Vector2 bodyOffsetFactor;
+  late double _health;
   late final RectangleHitbox hitbox;
   late final RectangleHitbox body;
   late Ray2 ray;
@@ -40,19 +61,24 @@ class Enemy extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    _health = maxHealth;
     hitbox = RectangleHitbox(collisionType: CollisionType.passive);
-    body = RectangleHitbox(position: size / 4, size: size / 2, isSolid: true);
+    body = RectangleHitbox(
+      position: size.clone()..multiply(bodyOffsetFactor),
+      size: size.clone()..multiply(bodySizeFactor),
+      isSolid: true,
+    );
 
     add(hitbox);
     add(body
       //..debugMode = true
       ..debugColor = Colors.red);
     animation = await game.loadSpriteAnimation(
-      'enemy.png',
+      spritePath,
       SpriteAnimationData.sequenced(
-        amount: 4,
+        amount: frameCount,
         stepTime: .2,
-        textureSize: Vector2.all(16),
+        textureSize: frameSize,
       ),
     );
     //game.add(LineComponent(start: position, end: game.player.position));
@@ -86,8 +112,9 @@ class Enemy extends SpriteAnimationComponent
 
         Vector2 perpendicular = Vector2(-direction.y, direction.x);
         Vector2 perpColVector = collisionVector.projection(perpendicular);
+        final collisionRadius = size.x * 0.5;
         double value =
-            -0.5 * perpColVector.length2 / (enemySize / 2 * enemySize / 2) +
+            -0.5 * perpColVector.length2 / (collisionRadius * collisionRadius) +
                 0.5;
         if (collisionVector.angleToSigned(direction) > 0) {
           position += perpendicular.scaled(value.clamp(0.1, 10));
@@ -111,7 +138,7 @@ class Enemy extends SpriteAnimationComponent
         other.removeFromParent();
       }
       other.penetration -= 1;
-      enemyDeath();
+      takeDamage(other.damage);
     }
     if (other is Player) {
       //enemyDeath();
@@ -124,6 +151,16 @@ class Enemy extends SpriteAnimationComponent
       game.world.add(XP(position: position));
     }
     removeFromParent();
+  }
+
+  void takeDamage(double amount) {
+    if (amount <= 0) {
+      return;
+    }
+    _health -= amount;
+    if (_health <= 0) {
+      enemyDeath();
+    }
   }
 
   void changeDirection(double angleBetween, double dt) {

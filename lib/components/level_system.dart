@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:space_scape/components/weapons/weapon.dart';
 import 'package:space_scape/components/weapons/weapon_system.dart';
 
 import '../space_game.dart';
@@ -95,13 +96,23 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
   void applyUpgrade(UpgradeLevel upgrade) {
     //TODO: IMPLEMENTAR UPGRADES PASSIVOS e ativos
     if (upgrade.upgradeType == UpgradeType.weapon) {
-      final weapon = weaponSystem.activeWeapons.firstWhere(
-        (element) => element.name == upgrade.name,
-        orElse: () => throw Exception('Weapon ${upgrade.name} not found!'),
-      );
       if (upgrade.level == 0) {
+        final weapon = weaponSystem.availableWeapons.cast<Weapon?>().firstWhere(
+              (element) => element?.name == upgrade.name,
+              orElse: () => null,
+            );
+        if (weapon == null) {
+          throw Exception('Weapon ${upgrade.name} not found!');
+        }
         weaponSystem.addWeapon(weapon);
       } else if (upgrade.level < 7) {
+        final weapon = weaponSystem.activeWeapons.cast<Weapon?>().firstWhere(
+              (element) => element?.name == upgrade.name,
+              orElse: () => null,
+            );
+        if (weapon == null) {
+          throw Exception('Weapon ${upgrade.name} not found!');
+        }
         weapon.applyUpgrade(upgrade);
       }
     }

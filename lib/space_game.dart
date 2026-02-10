@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -7,6 +8,8 @@ import 'package:flame/input.dart';
 import 'package:flame/src/gestures/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
+import 'package:space_scape/components/aliencommander.dart';
+import 'package:space_scape/components/alienfighter.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
 import 'package:space_scape/components/ships/basic_ship.dart';
@@ -64,6 +67,7 @@ class SpaceGame extends FlameGame
   bool isEnemyMovementEnabled = false;
   bool isEnemySpawnEnabled = false;
   bool isPlayerWeaponEnabled = false;
+  final Random _enemyRng = Random();
 
   @override
   Future<void> onLoad() async {
@@ -103,7 +107,16 @@ class SpaceGame extends FlameGame
     //ENEMY SPAWN
 
     spawnEnemyA = SpawnComponent(
-      factory: (amount) => Enemy(),
+      factory: (amount) {
+        final roll = _enemyRng.nextInt(6);
+        if (roll == 0) {
+          return AlienCommander();
+        }
+        if (roll <= 2) {
+          return AlienFighter();
+        }
+        return Enemy();
+      },
       within: false,
       autoStart: false,
       period: enemySpawnRate,
