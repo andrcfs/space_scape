@@ -1,0 +1,212 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #2e2e2e
+skinparam classBackgroundColor #1e1e1e
+skinparam classBorderColor #444444
+skinparam classArrowColor #aaaaaa
+skinparam classFontColor #ffffff
+skinparam classAttributeFontColor #dddddd
+
+package "Core Game" {
+    class SpaceGame << (C,green) >> {
+        + player : Player
+        + weaponSystem : WeaponSystem
+        + levelSystem : LevelSystem
+        + upgradeManager : UpgradeManager
+        + enemyCount : int
+        + xp : int
+        + gameOver : bool
+        + startGame()
+        + startTest()
+        + toggleEnemyMovement()
+        + toggleEnemySpawn()
+    }
+
+    class SpaceGameWidget << (W,orchid) Widget >> {
+        + build()
+    }
+}
+
+package "Components" {
+    class Player {
+        + ship : Ship
+        + weapons : List<Weapon>
+        + velocity : Vector2
+        + setShip(Ship)
+        + move(dt)
+        + rotate(dt)
+    }
+
+    abstract class Ship {
+        + health : ValueNotifier<double>
+        + shield : ValueNotifier<double>
+        + maxHealth : double
+        + maxShield : double
+        + defaultWeapon : Weapon
+        + takeHit(damage)
+        {abstract} + loadShipAnimation()
+    }
+
+    class BasicShip extends Ship {
+        + maxHealth : double
+        + maxShield : double
+        + acceleration : double
+        + defaultWeapon : BulletWeapon
+    }
+
+    abstract class Enemy {
+        + health : double
+        + enemySpeed : double
+        + damage : double
+        + takeDamage(amount, pushForce)
+        {abstract} + enemyDeath()
+    }
+
+    class BasicEnemy extends Enemy {
+        + enemySpeed : double
+        + maxHealth : double
+        + xpDropRate : int
+        + enemyDeath()
+    }
+    
+    class Explosion {
+    }
+
+    class XP {
+        + moveToPlayer()
+    }
+    
+    class Bullet {
+        + speed : double
+        + damage : double
+        + penetration : int
+    }
+    
+    class DamageNotification {
+        + damageAmount : double
+    }
+
+    class Background {
+    }
+}
+
+package "Weapons" {
+    abstract class Weapon {
+        + name : String
+        + level : int
+        + damage : double
+        + cooldown : double
+        + fire()
+        + applyUpgrade(Upgrade)
+        + upgradeStats(Map)
+    }
+
+    class WeaponSystem {
+        + activeWeapons : Set<Weapon>
+        + availableWeapons : Set<Weapon>
+        + addWeapon(Weapon)
+    }
+
+    class BulletWeapon extends Weapon {
+        - _bulletSpeed : double
+        - _bulletAngles : List<double>
+        + fire()
+    }
+
+    class CoronalDischargeWeapon extends Weapon {
+        - _aoeRadius : double
+        - _coronalBody : CoronalDischargeBody
+        + fire()
+    }
+
+    class CoronalDischargeBody {
+        + damage : double
+        + radius : double
+        + applyDamage()
+    }
+}
+
+package "Systems & Upgrades" {
+    class LevelSystem {
+        + playerLevel : int
+        + currentXP : int
+        + xpToNextLevel : int
+        + addXP(amount)
+        + getAvailableUpgrades() : List<Upgrade>
+        + applyUpgrade(Upgrade)
+    }
+
+    class UpgradeManager {
+        + getAvailableUpgrades(level) : List<Upgrade>
+    }
+
+    abstract class Upgrade {
+        + name : String
+        + description : String
+        + statChanges : Map
+        + apply(SpaceGame)
+    }
+
+    class WeaponUpgrade extends Upgrade {
+        + apply(SpaceGame)
+    }
+
+    class PlayerStatUpgrade extends Upgrade {
+        + apply(SpaceGame)
+    }
+    
+    class RepairUpgrade extends PlayerStatUpgrade {
+        + apply(SpaceGame)
+    }
+}
+
+package "World & Map" {
+    class Map1 {
+        + parallax : ParallaxComponent
+    }
+}
+
+package "UI & Overlays" {
+    class HUD << (W,orchid) Widget >>
+    class Menu << (W,orchid) Widget >>
+    class PauseMenu << (W,orchid) Widget >>
+    class UpgradeMenu << (W,orchid) Widget >>
+    class DebugMenuSection << (W,orchid) Widget >>
+}
+
+' Relationships
+SpaceGameWidget --> SpaceGame : initializes
+SpaceGame *-- Player
+SpaceGame *-- LevelSystem
+SpaceGame *-- WeaponSystem
+SpaceGame *-- UpgradeManager
+SpaceGame o-- Map1
+
+Player o-- Ship
+Ship <|-- BasicShip
+Ship *-- Weapon : defaultWeapon
+Player o-- Weapon : active weapons
+
+WeaponSystem o-- Weapon
+Weapon <|-- BulletWeapon
+Weapon <|-- CoronalDischargeWeapon
+CoronalDischargeWeapon *-- CoronalDischargeBody
+BulletWeapon ..> Bullet : creates
+
+LevelSystem o-- UpgradeManager
+LevelSystem ..> Upgrade : manages
+UpgradeManager ..> Upgrade : generates
+
+Upgrade <|-- WeaponUpgrade
+Upgrade <|-- PlayerStatUpgrade
+PlayerStatUpgrade <|-- RepairUpgrade
+
+Map1 o-- Background
+Map1 ..> Enemy : spawns
+Enemy <|-- BasicEnemy
+Enemy ..> Explosion : creates
+Enemy ..> XP : drops
+Enemy ..> DamageNotification : creates
+
+@enduml
