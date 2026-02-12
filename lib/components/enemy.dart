@@ -43,6 +43,7 @@ abstract class Enemy extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    _health = maxHealth;
     hitbox = RectangleHitbox(collisionType: CollisionType.passive);
     body = RectangleHitbox(
         position: size / 4,
@@ -93,6 +94,7 @@ abstract class Enemy extends SpriteAnimationComponent
 
         Vector2 perpendicular = Vector2(-direction.y, direction.x);
         Vector2 perpColVector = collisionVector.projection(perpendicular);
+        final collisionRadius = size.x * 0.5;
         double value =
             -0.5 * perpColVector.length2 / (size.x / 2 * size.y / 2) + 0.5;
         if (collisionVector.angleToSigned(direction) > 0) {
@@ -145,6 +147,16 @@ abstract class Enemy extends SpriteAnimationComponent
     _playerDirection = (game.player.ship.position - position).normalized();
     if (_playerDirection.angleToSigned(direction).abs() > 0.1) {
       changeDirection(_playerDirection.angleToSigned(direction), dt);
+    }
+  }
+
+  void takeDamage(double amount) {
+    if (amount <= 0) {
+      return;
+    }
+    _health -= amount;
+    if (_health <= 0) {
+      enemyDeath();
     }
   }
 

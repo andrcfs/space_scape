@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -69,6 +70,7 @@ class SpaceGame extends FlameGame
   bool isEnemyMovementEnabled = false;
   bool isEnemySpawnEnabled = false;
   bool isPlayerWeaponEnabled = false;
+  final Random _enemyRng = Random();
 
   @override
   Future<void> onLoad() async {
