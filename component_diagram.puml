@@ -1,0 +1,54 @@
+
+@startuml
+
+!theme vibrant
+
+skinparam componentStyle rectangle
+
+package "Game Core" {
+  [SpaceGame] as Game
+  [Player]
+  [LevelSystem]
+  [UpgradeManager]
+  [WeaponSystem]
+  [Enemy]
+}
+
+package "UI" {
+  [UpgradeMenu]
+  [HUD]
+  [PauseMenu]
+}
+
+package "Game Components" {
+  [Ship]
+  [Weapon]
+  [Upgrade]
+  [Bullet]
+}
+
+Game -- Player
+Game -- LevelSystem
+Game -- UpgradeManager
+Game -- WeaponSystem
+Game -- Enemy
+
+Player -- Ship
+Player -- WeaponSystem
+
+LevelSystem -- UpgradeManager
+LevelSystem -- Game : uses >
+
+UpgradeManager -- Upgrade
+UpgradeManager -- WeaponSystem
+
+WeaponSystem -- Weapon
+Weapon -- Bullet
+
+Game -- UpgradeMenu : shows >
+Game -- HUD : shows >
+Game -- PauseMenu : shows >
+
+UpgradeMenu -- UpgradeManager : gets upgrades >
+
+@enduml
