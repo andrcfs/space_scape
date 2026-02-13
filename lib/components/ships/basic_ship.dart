@@ -3,6 +3,10 @@ import 'package:space_scape/components/ships/ship.dart';
 import 'package:space_scape/components/weapons/bullet_weapon.dart';
 
 class BasicShip extends Ship {
+  double _maxShield = 20;
+  double _regenAmount = 1;
+  double _shieldRegenCooldown = 10;
+
   BasicShip(super.player)
       : super(
           size: Vector2(32, 39),
@@ -19,13 +23,22 @@ class BasicShip extends Ship {
   double get baseMaxHealth => 100; // Added missing getter implementation
 
   @override
-  double get maxShield => 0;
+  double get maxShield => _maxShield;
 
   @override
-  double get regenAmount => 1;
+  set maxShield(double value) => _maxShield = value;
 
   @override
-  double get shieldRegenCooldown => 10;
+  double get regenAmount => _regenAmount;
+
+  @override
+  set regenAmount(double value) => _regenAmount = value;
+
+  @override
+  double get shieldRegenCooldown => _shieldRegenCooldown;
+
+  @override
+  set shieldRegenCooldown(double value) => _shieldRegenCooldown = value;
 
   @override
   double get acceleration => 65;

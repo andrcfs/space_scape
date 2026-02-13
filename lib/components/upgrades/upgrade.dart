@@ -67,6 +67,16 @@ abstract class Upgrade {
         case 'maxHealth':
           changes.add('Max Health +$value');
           break;
+        case 'maxShield':
+          changes.add('Max Shield +$value');
+          break;
+        case 'regenAmount':
+          changes.add('Shield Regen +$value');
+          break;
+        case 'shieldRegenCooldown':
+          final reduction = (value as num).abs();
+          changes.add('Shield Cooldown -$reduction');
+          break;
         default:
           changes.add('$key: $value');
       }
@@ -112,20 +122,42 @@ class PlayerStatUpgrade extends Upgrade {
 
   @override
   void apply(SpaceGame game) {
+    if (statChanges.containsKey('maxHealth')) {
+      game.player.ship
+          .modifyMaxHealth((statChanges['maxHealth'] as num).toDouble());
+    }
+    if (statChanges.containsKey('maxShield')) {
+      game.player.ship.maxShield +=
+          (statChanges['maxShield'] as num).toDouble();
+    }
+    if (statChanges.containsKey('regenAmount')) {
+      game.player.ship.regenAmount +=
+          (statChanges['regenAmount'] as num).toDouble();
+    }
+    if (statChanges.containsKey('shieldRegenCooldown')) {
+      game.player.ship.shieldRegenCooldown =
+          (game.player.ship.shieldRegenCooldown +
+                  (statChanges['shieldRegenCooldown'] as num).toDouble())
+              .clamp(2, double.infinity);
+    }
     if (statChanges.containsKey('health')) {
-      game.player.ship.health.value += statChanges['health'];
+      game.player.ship.health.value +=
+          (statChanges['health'] as num).toDouble();
       if (game.player.ship.health.value > game.player.ship.maxHealth) {
         game.player.ship.health.value = game.player.ship.maxHealth;
       }
     }
     if (statChanges.containsKey('shield')) {
-      game.player.ship.shield.value += statChanges['shield'];
+      game.player.ship.shield.value +=
+          (statChanges['shield'] as num).toDouble();
       if (game.player.ship.shield.value > game.player.ship.maxShield) {
         game.player.ship.shield.value = game.player.ship.maxShield;
       }
     }
-    if (statChanges.containsKey('maxHealth')) {
-      game.player.ship.modifyMaxHealth(statChanges['maxHealth']);
+
+    if (name == 'Energy Shield' &&
+        statChanges.containsKey('shieldRegenCooldown')) {
+      game.player.ship.shield.value = game.player.ship.maxShield;
     }
   }
 }

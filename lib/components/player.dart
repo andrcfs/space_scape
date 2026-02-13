@@ -41,7 +41,8 @@ class Player extends Component with HasGameReference<SpaceGame> {
 
     if (shieldRegenCurrent > 0) shieldRegenCurrent -= dt;
     if (shieldRegenCurrent <= 0 && ship.shield.value < ship.maxShield) {
-      ship.shield.value = (ship.shield.value + dt).clamp(0, ship.maxShield);
+      ship.shield.value =
+          (ship.shield.value + dt * ship.regenAmount).clamp(0, ship.maxShield);
     }
 
     if (ship.health.value <= 0) {

@@ -64,6 +64,7 @@ class LevelSystem extends Component with HasGameReference<SpaceGame> {
 
   void applyUpgrade(Upgrade upgrade) {
     upgrade.apply(game);
+    upgradeManager.markApplied(upgrade);
     _levelUpPending = false;
   }
 }

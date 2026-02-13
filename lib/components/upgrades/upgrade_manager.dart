@@ -8,6 +8,7 @@ import '../../space_game.dart';
 class UpgradeManager {
   final SpaceGame game;
   final WeaponSystem weaponSystem;
+  final Map<String, int> _passiveLevels = {};
 
   UpgradeManager({required this.game, required this.weaponSystem});
 
@@ -20,7 +21,16 @@ class UpgradeManager {
     }
 
     // Add passive upgrades
-    availableUpgrades.addAll(passiveUpgrades.where((upgrade) => upgrade.level == 1));
+    final passiveNames = passiveUpgrades.map((upgrade) => upgrade.name).toSet();
+    for (final name in passiveNames) {
+      final currentLevel = _passiveLevels[name] ?? 0;
+      for (final upgrade in passiveUpgrades) {
+        if (upgrade.name == name && upgrade.level == currentLevel + 1) {
+          availableUpgrades.add(upgrade);
+          break;
+        }
+      }
+    }
 
     // If no other upgrades are available, offer repair
     if (availableUpgrades.isEmpty) {
@@ -33,5 +43,11 @@ class UpgradeManager {
     }
 
     return availableUpgrades;
+  }
+
+  void markApplied(Upgrade upgrade) {
+    if (upgrade.upgradeType == UpgradeType.passive) {
+      _passiveLevels[upgrade.name] = upgrade.level;
+    }
   }
 }
