@@ -8,6 +8,7 @@ import '../explosion.dart';
 import '../player.dart';
 import '../weapons/weapon.dart';
 import '../xp.dart';
+import '../shield_effect.dart';
 
 abstract class Ship extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
@@ -23,16 +24,34 @@ abstract class Ship extends SpriteAnimationComponent
   double iTimeLeft = 0;
   static const double iTime = 0.1;
 
+  double shieldEffectTimer = 0;
+  static const double shieldEffectDuration = 0.15;
+
+  // Health modifier for upgrades/powerups
+  double _healthModifier = 0;
+  double get healthModifier => _healthModifier;
+
   // These should be overridden by concrete implementations
-  double get maxHealth;
+  double get baseMaxHealth; // Base health value
+  double get maxHealth =>
+      baseMaxHealth + _healthModifier; // Total health including modifiers
   double get maxShield;
+  set maxShield(double value);
   double get regenAmount;
+  set regenAmount(double value);
   double get shieldRegenCooldown;
+  set shieldRegenCooldown(double value);
   double get acceleration;
   double get maxSpeed;
   double get brake;
   double get turnSpeed;
   double get collectRadius;
+
+  // Method to modify max health
+  void modifyMaxHealth(double amount) {
+    _healthModifier += amount;
+    health.value += amount;
+  }
 
   // Each ship can have its own starting weapons
   Weapon get defaultWeapon;
@@ -57,6 +76,8 @@ abstract class Ship extends SpriteAnimationComponent
     // Load the ship's sprite animation - each ship will implement this
     animation = await loadShipAnimation();
 
+    add(ShieldEffect(this));
+
     await super.onLoad();
   }
 
@@ -68,6 +89,7 @@ abstract class Ship extends SpriteAnimationComponent
       iTimeLeft = iTime;
       player.shieldRegenCurrent = shieldRegenCooldown;
       shield.value = (shield.value - damage).clamp(0, maxShield);
+      shieldEffectTimer = shieldEffectDuration;
     } else {
       iTimeLeft = iTime;
       game.world.add(Explosion(position: position, size: Vector2.all(20)));
@@ -97,7 +119,6 @@ abstract class Ship extends SpriteAnimationComponent
     super.update(dt);
 
     if (iTimeLeft > 0) iTimeLeft -= dt;
-
-    // Ship-specific update logic can be added in subclasses
+    if (shieldEffectTimer > 0) shieldEffectTimer -= dt;
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bonfire/bonfire.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
 import '../space_game.dart';
@@ -41,11 +41,12 @@ class Player extends Component with HasGameReference<SpaceGame> {
 
     if (shieldRegenCurrent > 0) shieldRegenCurrent -= dt;
     if (shieldRegenCurrent <= 0 && ship.shield.value < ship.maxShield) {
-      ship.shield.value = (ship.shield.value + dt).clamp(0, ship.maxShield);
+      ship.shield.value =
+          (ship.shield.value + dt * ship.regenAmount).clamp(0, ship.maxShield);
     }
 
     if (ship.health.value <= 0) {
-      print('Game Over');
+      
       game.gameOver = true;
       velocity = Vector2.zero();
     }

@@ -50,6 +50,19 @@ class UpgradeLevel {
         case 'penetration':
           changes.add('Penetration +$value');
           break;
+        case 'maxShield':
+          changes.add('Max Shield +$value');
+          break;
+        case 'regenAmount':
+          changes.add('Shield Regen +$value');
+          break;
+        case 'shieldRegenCooldown':
+          final reduction = (value as num).abs();
+          changes.add('Shield Cooldown -$reduction');
+          break;
+        case 'health':
+          changes.add('Heal');
+          break;
         default:
           changes.add('$key: $value');
       }
