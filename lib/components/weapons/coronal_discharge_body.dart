@@ -2,7 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-import '../enemy.dart';
+import '../entities/enemy.dart';
 
 class CoronalDischargeBody extends CircleComponent with CollisionCallbacks {
   double damage;

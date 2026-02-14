@@ -3,11 +3,11 @@ import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../space_game.dart';
-import '../enemy.dart';
+import '../entities/enemy.dart';
+import '../entities/player.dart';
 import '../explosion.dart';
-import '../player.dart';
+import '../objects/xp.dart';
 import '../weapons/weapon.dart';
-import '../xp.dart';
 
 abstract class Ship extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {

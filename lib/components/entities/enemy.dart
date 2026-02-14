@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import 'package:space_scape/components/bullets.dart';
 import 'package:space_scape/space_game.dart';
 
-import 'damage_notification.dart';
+import '../damage_notification.dart';
 
 abstract class Enemy extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {

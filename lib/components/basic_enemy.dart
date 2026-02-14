@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:space_scape/components/enemy.dart';
+import 'package:space_scape/components/entities/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
-import 'package:space_scape/components/xp.dart';
+import 'package:space_scape/components/objects/xp.dart';
 
 class BasicEnemy extends Enemy {
   static const double _enemySize = 24.0;

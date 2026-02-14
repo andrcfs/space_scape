@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/entities/player.dart';
 
 import '../../space_game.dart';
 import 'bullet_weapon.dart';
@@ -33,7 +33,7 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
       CoronalDischargeWeapon(player: player),
       /*
       TurretWeapon(
-        player: player, 
+        player: player,
         rotationSpeed: 2.0,
         bulletSpeed: 150,
         offset: Vector2(0, -20),

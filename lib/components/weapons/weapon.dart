@@ -1,6 +1,6 @@
 // weapons/base_weapon.dart
 import 'package:flame/components.dart';
-import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/entities/player.dart';
 import 'package:space_scape/components/upgrades/upgrade.dart';
 import 'package:space_scape/space_game.dart';
 

@@ -112,7 +112,7 @@ class BulletWeapon extends Weapon {
       _bulletAngles.map(
         (angle) => Bullet(
           position: player.ship.position +
-              player.direction.scaled(player.ship.size.y / 2),
+              player.mobStats.direction.scaled(player.ship.size.y / 2),
           speed: _bulletSpeed,
           angle: player.ship.angle + angle,
           damage: damage,

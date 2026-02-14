@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:space_scape/components/background.dart';
-import 'package:space_scape/components/enemy.dart';
+import 'package:space_scape/components/entities/enemy.dart';
 import 'package:space_scape/space_game.dart';
 
 class Map1 extends World with HasGameReference<SpaceGame> {
@@ -41,7 +41,7 @@ class Map1 extends World with HasGameReference<SpaceGame> {
     _updateTimer += dt;
     if (_updateTimer >= _updateInterval) {
       _updateTimer = 0.0;
-      parallax.parallax?.baseVelocity = game.player.velocity;
+      parallax.parallax?.baseVelocity = game.player.mobStats.velocity;
     }
   }
 }
