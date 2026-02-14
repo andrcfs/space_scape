@@ -10,12 +10,13 @@ import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:space_scape/components/basic_enemy.dart';
-import 'package:space_scape/components/enemy.dart';
-import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/entities/enemy.dart';
+import 'package:space_scape/components/entities/player.dart';
+import 'package:space_scape/components/objects/xp.dart';
 import 'package:space_scape/components/ships/basic_ship.dart';
-import 'package:space_scape/components/xp.dart';
 
 import 'components/level_system.dart';
+import 'components/movement/mobility_stats.dart';
 import 'components/upgrades/upgrade_manager.dart';
 import 'components/weapons/weapon_system.dart';
 
@@ -74,7 +75,13 @@ class SpaceGame extends FlameGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    player = Player();
+    player = Player(
+        mobilityStats: MobilityStats(
+      acceleration: 200,
+      maxSpeed: 300,
+      brakeRatio: 0.5,
+      turnSpeed: 3,
+    ));
     player.setShip(BasicShip(player));
     weaponSystem = WeaponSystem(player);
     upgradeManager = UpgradeManager(game: this, weaponSystem: weaponSystem);
