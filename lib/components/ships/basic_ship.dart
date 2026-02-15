@@ -16,6 +16,9 @@ class BasicShip extends Ship {
   double get maxHealth => 100;
 
   @override
+  double get baseMaxHealth => 100; // Added missing getter implementation
+
+  @override
   double get maxShield => 0;
 
   @override

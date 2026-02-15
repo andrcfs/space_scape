@@ -4,15 +4,20 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+// ignore: implementation_imports
 import 'package:flame/src/gestures/events.dart';
 import 'package:flutter/material.dart';
+// ignore: implementation_imports
 import 'package:flutter/src/services/hardware_keyboard.dart';
+import 'package:space_scape/components/alien_commander.dart';
+import 'package:space_scape/components/basic_enemy.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
 import 'package:space_scape/components/ships/basic_ship.dart';
 import 'package:space_scape/components/xp.dart';
 
 import 'components/level_system.dart';
+import 'components/upgrades/upgrade_manager.dart';
 import 'components/weapons/weapon_system.dart';
 
 final List<LogicalKeyboardKey> keys = [
@@ -35,7 +40,7 @@ class SpaceGame extends FlameGame
   SpaceGame({required super.world});
 
   late Player player;
-  late Enemy enemy;
+  late BasicEnemy enemy;
   late int enemyACap = 30;
   late CameraComponent playerCamera;
 
@@ -46,7 +51,9 @@ class SpaceGame extends FlameGame
 
   late final WeaponSystem weaponSystem;
   late final LevelSystem levelSystem;
+  late final UpgradeManager upgradeManager;
   late SpawnComponent spawnEnemyA;
+  late SpawnComponent spawnAlienCommander;
   bool testSpawn = false;
 
   final double _updateInterval = .1;
@@ -54,6 +61,7 @@ class SpaceGame extends FlameGame
   bool gameOver = true;
   bool isTest = false;
   double enemySpawnRate = 0.5;
+  late double alienCommanderSpawnRate;
   double w = 0.0;
   double s = 0.0;
   double a = 0.0;
@@ -72,7 +80,8 @@ class SpaceGame extends FlameGame
     player = Player();
     player.setShip(BasicShip(player));
     weaponSystem = WeaponSystem(player);
-    levelSystem = LevelSystem(weaponSystem);
+    upgradeManager = UpgradeManager(game: this, weaponSystem: weaponSystem);
+    levelSystem = LevelSystem(upgradeManager);
 
     //CAMERA AND UI
 
@@ -102,8 +111,10 @@ class SpaceGame extends FlameGame
 
     //ENEMY SPAWN
 
+    alienCommanderSpawnRate = enemySpawnRate * 4;
+
     spawnEnemyA = SpawnComponent(
-      factory: (amount) => Enemy(),
+      factory: (amount) => BasicEnemy(),
       within: false,
       autoStart: false,
       period: enemySpawnRate,
@@ -113,6 +124,18 @@ class SpaceGame extends FlameGame
           1000),
     );
     world.add(spawnEnemyA);
+
+    spawnAlienCommander = SpawnComponent(
+      factory: (amount) => AlienCommander(),
+      within: false,
+      autoStart: false,
+      period: alienCommanderSpawnRate,
+      area: Circle(
+        Vector2(camera.viewport.virtualSize.x / 2,
+          camera.viewport.virtualSize.y / 2),
+        1000),
+    );
+    world.add(spawnAlienCommander);
 
     world.addAll([player, levelSystem, weaponSystem]);
   }
@@ -129,10 +152,14 @@ class SpaceGame extends FlameGame
       _updateTimer = 0.0;
       if (enemyCount >= enemyACap) {
         spawnEnemyA.timer.stop();
+        spawnAlienCommander.timer.stop();
       } else if (!spawnEnemyA.timer.isRunning() && !gameOver && !debugMode) {
         spawnEnemyA.timer.start();
+        spawnAlienCommander.timer.start();
       }
       spawnEnemyA.area =
+          Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
+      spawnAlienCommander.area =
           Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
     }
   }
@@ -187,8 +214,10 @@ class SpaceGame extends FlameGame
     isEnemySpawnEnabled = !isEnemySpawnEnabled;
     if (isEnemySpawnEnabled) {
       spawnEnemyA.timer.start();
+      spawnAlienCommander.timer.start();
     } else {
       spawnEnemyA.timer.stop();
+      spawnAlienCommander.timer.stop();
     }
   }
 
@@ -203,19 +232,20 @@ class SpaceGame extends FlameGame
     overlays.add('PlayerUI');
     xp = 0;
     spawnEnemyA.timer.start();
+    spawnAlienCommander.timer.start();
     world.addAll([
       XP(position: Vector2(size.x * 0.4, size.y / 2)),
-      Enemy(position: Vector2(size.x + 10, -size.y / 6)),
-      Enemy(position: Vector2(-size.x / 6, -size.y / 6)),
-      Enemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
-      Enemy(position: Vector2(size.x / 2, size.y + 10)),
-      Enemy(position: Vector2(-10, size.y / 2 + 300)),
-      Enemy(position: Vector2(size.x / 2 + 150, -20)),
-      Enemy(position: Vector2(size.x / 2 - 300, -20)),
-      /* Enemy(position: Vector2(size.x - 160, size.y - 150)),
-      Enemy(position: Vector2(size.x - 140, size.y - 150)),
-      Enemy(position: Vector2(size.x - 150, size.y - 150)),
-      Enemy(position: Vector2(size.x - 175, size.y - 199)), */
+      BasicEnemy(position: Vector2(size.x + 10, -size.y / 6)),
+      BasicEnemy(position: Vector2(-size.x / 6, -size.y / 6)),
+      BasicEnemy(position: Vector2(size.x + 20, size.y * 1 / 2 - 200)),
+      BasicEnemy(position: Vector2(size.x / 2, size.y + 10)),
+      BasicEnemy(position: Vector2(-10, size.y / 2 + 300)),
+      BasicEnemy(position: Vector2(size.x / 2 + 150, -20)),
+      BasicEnemy(position: Vector2(size.x / 2 - 300, -20)),
+      /* BasicEnemy(position: Vector2(size.x - 160, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 140, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 150, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 175, size.y - 199)), */
     ]);
   }
 
@@ -230,16 +260,16 @@ class SpaceGame extends FlameGame
       XP(
         position: Vector2(size.x * 0.4, size.y / 2),
       ),
-      Enemy(position: Vector2(size.x * 0.3, size.y * 0.5)),
-      Enemy(position: Vector2(-size.x * 0.3, size.y * 0.4)),
-      Enemy(position: Vector2(size.x * 0.35, size.y * 0.45)),
-      Enemy(position: Vector2(size.x * 0.37, size.y * 0.4)),
-      Enemy(position: Vector2(size.x * 0.4, size.y * 0.4)),
-      Enemy(position: Vector2(size.x * 0.3, size.y * 0.3)),
-      /* Enemy(position: Vector2(size.x - 160, size.y - 150)),
-      Enemy(position: Vector2(size.x - 140, size.y - 150)),
-      Enemy(position: Vector2(size.x - 150, size.y - 150)),
-      Enemy(position: Vector2(size.x - 175, size.y - 199)), */
+      BasicEnemy(position: Vector2(size.x * 0.3, size.y * 0.5)),
+      BasicEnemy(position: Vector2(-size.x * 0.3, size.y * 0.4)),
+      BasicEnemy(position: Vector2(size.x * 0.35, size.y * 0.45)),
+      BasicEnemy(position: Vector2(size.x * 0.37, size.y * 0.4)),
+      BasicEnemy(position: Vector2(size.x * 0.4, size.y * 0.4)),
+      BasicEnemy(position: Vector2(size.x * 0.3, size.y * 0.3)),
+      /* BasicEnemy(position: Vector2(size.x - 160, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 140, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 150, size.y - 150)),
+      BasicEnemy(position: Vector2(size.x - 175, size.y - 199)), */
     ]);
     Enemy.hasMovement = !Enemy.hasMovement;
   }

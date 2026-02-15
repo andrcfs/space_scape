@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../components/upgrade.dart';
+import '../components/upgrades/upgrade.dart';
 import '../space_game.dart';
 
 class UpgradeMenu extends StatelessWidget {
@@ -10,7 +10,7 @@ class UpgradeMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get available upgrades from the level system
-    List<UpgradeLevel> availableUpgrades =
+    List<Upgrade> availableUpgrades =
         game.levelSystem.getAvailableUpgrades();
 
     return Center(
@@ -39,7 +39,7 @@ class UpgradeMenu extends StatelessWidget {
     );
   }
 
-  void _applyUpgrade(UpgradeLevel upgrade) {
+  void _applyUpgrade(Upgrade upgrade) {
     // Use the level system to apply the upgrade
     game.levelSystem.applyUpgrade(upgrade);
 
@@ -50,7 +50,7 @@ class UpgradeMenu extends StatelessWidget {
 }
 
 class UpgradeOption extends StatelessWidget {
-  final UpgradeLevel upgrade;
+  final Upgrade upgrade;
   final VoidCallback onSelected;
 
   const UpgradeOption({
@@ -107,14 +107,16 @@ class UpgradeOption extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-
-                // Upgrade description
-                Text(
-                  upgrade.description,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
+                Flexible(
+                  child: Text(
+                    upgrade.description,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
 

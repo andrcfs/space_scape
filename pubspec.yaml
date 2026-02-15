@@ -7,7 +7,6 @@ environment:
   sdk: ">=3.4.3 <4.0.0"
 
 dependencies:
-  bonfire: ^3.6.2
   flame: ^1.18.0
   audioplayers: ^5.2.1
   flutter:
@@ -26,4 +25,8 @@ flutter:
     - assets/audio/
     - assets/images/
     - assets/tiles/
+  fonts:
+    - family: Unlearned
+      fonts:
+        - asset: assets/fonts/unlearned2.ttf
   uses-material-design: true
