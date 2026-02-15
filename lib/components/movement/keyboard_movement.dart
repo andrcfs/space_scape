@@ -9,13 +9,13 @@ class KeyboardMovement extends MovementBehavior
 
   @override
   void update(double dt) {
+    thrust(dt);
     move(dt);
     rotate(dt);
   }
 
   @override
   void move(double delta) {
-    thrust(delta);
     if (stats.externalForce != null) {
       //NÃO SEI SE FICA AQUI
       acceleration(delta, stats.externalForce!, stats.acceleration);
@@ -26,29 +26,29 @@ class KeyboardMovement extends MovementBehavior
   }
 
   @override
-  void rotate(double delta) {
+  void rotate(double dt) {
+    super.rotate(dt);
     if (game.pressedKeys.contains(LogicalKeyboardKey.keyA) ||
         game.pressedKeys.contains(LogicalKeyboardKey.arrowLeft)) {
-      parentEntity.angle -= delta * stats.turnSpeed;
+      parentEntity.angle -= dt * stats.turnSpeed;
     }
     if (game.pressedKeys.contains(LogicalKeyboardKey.keyD) ||
         game.pressedKeys.contains(LogicalKeyboardKey.arrowRight)) {
-      parentEntity.angle += delta * stats.turnSpeed;
+      parentEntity.angle += dt * stats.turnSpeed;
     }
   }
 
   void thrust(double delta) {
-    // Clamp velocity to max speed TRAVA
-    if (stats.velocity.length > stats.maxSpeed) {
-      return;
-    }
     if (game.pressedKeys.contains(LogicalKeyboardKey.keyW) ||
         game.pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
       acceleration(delta, stats.direction, stats.acceleration);
     }
     if (game.pressedKeys.contains(LogicalKeyboardKey.keyS) ||
         game.pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
-      acceleration(delta, stats.direction, stats.acceleration);
+      acceleration(delta, stats.direction, stats.deceleration!);
+    }
+    if (stats.velocity.length > stats.maxSpeed) {
+      stats.velocity = stats.velocity.normalized() * stats.maxSpeed;
     }
   }
 }

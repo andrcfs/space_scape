@@ -1,4 +1,3 @@
-
 import 'package:space_scape/components/upgrades/passive_upgrades.dart';
 import 'package:space_scape/components/upgrades/upgrade.dart';
 import 'package:space_scape/components/weapons/weapon_system.dart';
@@ -20,7 +19,8 @@ class UpgradeManager {
     }
 
     // Add passive upgrades
-    availableUpgrades.addAll(passiveUpgrades.where((upgrade) => upgrade.level == 1));
+    availableUpgrades
+        .addAll(passiveUpgrades.where((upgrade) => upgrade.level == 1));
 
     // If no other upgrades are available, offer repair
     if (availableUpgrades.isEmpty) {
@@ -28,7 +28,7 @@ class UpgradeManager {
         name: 'Repair',
         description: 'Recover health',
         icon: '',
-        statChanges: {'health': game.player.ship.maxHealth},
+        statChanges: {'health': game.player.maxHealth},
       ));
     }
 

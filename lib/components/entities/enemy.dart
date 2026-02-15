@@ -142,7 +142,7 @@ abstract class Enemy extends SpriteAnimationComponent
   void enemyDeath();
 
   void facePlayer(double dt) {
-    _playerDirection = (game.player.ship.position - position).normalized();
+    _playerDirection = (game.player.position - position).normalized();
     if (_playerDirection.angleToSigned(direction).abs() > 0.1) {
       changeDirection(_playerDirection.angleToSigned(direction), dt);
     }

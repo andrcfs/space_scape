@@ -5,7 +5,7 @@ import 'package:space_scape/components/upgrades/upgrade.dart';
 import 'package:space_scape/space_game.dart';
 
 abstract class Weapon extends Component with HasGameReference<SpaceGame> {
-  final Player player;
+  late Player player;
 
   // Common weapon properties
   final String _name;
@@ -38,7 +38,6 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
   double? get speed => null;
 
   Weapon({
-    required this.player,
     required String name,
     required String description,
     required String iconPath,
@@ -49,6 +48,17 @@ abstract class Weapon extends Component with HasGameReference<SpaceGame> {
         _iconPath = iconPath,
         _pushForce = pushForce,
         _unlocked = unlocked;
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    // Get the player from the parent
+    if (parent is Player) {
+      player = parent as Player;
+    } else {
+      throw Exception('Weapon must be added as a child of a Player component');
+    }
+  }
 
   @override
   void update(double dt) {

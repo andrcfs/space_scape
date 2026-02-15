@@ -43,7 +43,7 @@ class BasicShip extends Ship {
   double get collectRadius => 40;
 
   @override
-  BulletWeapon get defaultWeapon => BulletWeapon(player: player);
+  BulletWeapon get defaultWeapon => BulletWeapon();
 
   @override
   Future<SpriteAnimation> loadShipAnimation() async {

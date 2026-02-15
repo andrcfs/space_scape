@@ -20,17 +20,22 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
     // First add starting weapon based on ship type
 
     // Then initialize other unlocked weapons
-    _initializeUnlockedWeapons();
-    addWeapon(player.ship.defaultWeapon);
+    final List<Weapon> weapons = [
+      BulletWeapon(),
+      CoronalDischargeWeapon(),
+      // Add more weapon templates here
+    ];
+
+    unlockedWeapons.addAll(weapons);
     availableWeapons.addAll(unlockedWeapons);
     availableWeapons.addAll(activeWeapons);
   }
 
   void _initializeUnlockedWeapons() {
     //TODO: This should be linked to game progress. This information may be saved in a json file
-    final weapons = [
-      BulletWeapon(player: player),
-      CoronalDischargeWeapon(player: player),
+    final List<Weapon> weapons = [
+      BulletWeapon(),
+      CoronalDischargeWeapon(),
       /*
       TurretWeapon(
         player: player,
@@ -48,6 +53,6 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
     weapon.levelUp();
     activeWeapons.add(weapon);
     unlockedWeapons.removeWhere((w) => w.name == weapon.name);
-    player.ship.add(weapon);
+    player.add(weapon);
   }
 }

@@ -23,7 +23,6 @@ class CoronalDischargeWeapon extends Weapon {
   double? get range => _aoeRadius;
 
   CoronalDischargeWeapon({
-    required super.player,
     super.name = 'Coronal Discharge',
     super.description =
         'Creates a high voltage eletric field that discharges at nearby enemies',
@@ -106,7 +105,7 @@ class CoronalDischargeWeapon extends Weapon {
 
     // Create the coronal discharge body component
     _coronalBody = CoronalDischargeBody(
-      position: game.player.ship.size / 2, // Don't set player position here
+      position: game.player.size / 2, // Don't set player position here
       radius: _aoeRadius,
       damage: _damage,
       pushForce: pushForce,

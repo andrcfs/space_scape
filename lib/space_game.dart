@@ -13,7 +13,6 @@ import 'package:space_scape/components/basic_enemy.dart';
 import 'package:space_scape/components/entities/enemy.dart';
 import 'package:space_scape/components/entities/player.dart';
 import 'package:space_scape/components/objects/xp.dart';
-import 'package:space_scape/components/ships/basic_ship.dart';
 
 import 'components/level_system.dart';
 import 'components/movement/mobility_stats.dart';
@@ -74,22 +73,22 @@ class SpaceGame extends FlameGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
+    // Game backbones and logic
     player = Player(
         mobilityStats: MobilityStats(
-      acceleration: 200,
-      maxSpeed: 300,
+      acceleration: 50,
+      maxSpeed: 65,
       brakeRatio: 0.5,
-      turnSpeed: 3,
+      turnSpeed: 2,
     ));
-    player.setShip(BasicShip(player));
+    //player.setShip(BasicShip(player));
     weaponSystem = WeaponSystem(player);
     upgradeManager = UpgradeManager(game: this, weaponSystem: weaponSystem);
     levelSystem = LevelSystem(upgradeManager);
 
     //CAMERA AND UI
 
-    camera.follow(player.ship);
+    camera.follow(player);
     camera.viewport.addAll([
       FpsTextComponent(
         position: size - Vector2(0, 75),
@@ -126,8 +125,9 @@ class SpaceGame extends FlameGame
           1000),
     );
     world.add(spawnEnemyA);
-
-    world.addAll([player, levelSystem, weaponSystem]);
+    world.add(player);
+    await player.loaded;
+    world.addAll([levelSystem, weaponSystem]);
   }
 
   @override
@@ -146,7 +146,7 @@ class SpaceGame extends FlameGame
         spawnEnemyA.timer.start();
       }
       spawnEnemyA.area =
-          Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
+          Circle(Vector2(player.position.x, player.position.y), 1000);
     }
   }
 

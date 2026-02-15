@@ -22,7 +22,6 @@ class BulletWeapon extends Weapon {
   double? get speed => _bulletSpeed;
 
   BulletWeapon({
-    required super.player,
     super.name = 'Basic Shot',
     super.description = 'Fires bullets in the direction you\'re facing',
     super.iconPath = 'weapons/basic_shot.png',
@@ -111,10 +110,10 @@ class BulletWeapon extends Weapon {
     game.world.addAll(
       _bulletAngles.map(
         (angle) => Bullet(
-          position: player.ship.position +
-              player.mobStats.direction.scaled(player.ship.size.y / 2),
+          position: player.position +
+              player.mobStats.direction.scaled(player.size.y / 2),
           speed: _bulletSpeed,
-          angle: player.ship.angle + angle,
+          angle: player.angle + angle,
           damage: damage,
           pushForce: pushForce,
           penetration: _bulletPenetration,

@@ -1,8 +1,4 @@
-
-
-
 import '../../space_game.dart';
-
 
 enum UpgradeType {
   passive,
@@ -113,19 +109,19 @@ class PlayerStatUpgrade extends Upgrade {
   @override
   void apply(SpaceGame game) {
     if (statChanges.containsKey('health')) {
-      game.player.ship.health.value += statChanges['health'];
-      if (game.player.ship.health.value > game.player.ship.maxHealth) {
-        game.player.ship.health.value = game.player.ship.maxHealth;
+      game.player.health.value += statChanges['health'];
+      if (game.player.health.value > game.player.maxHealth) {
+        game.player.health.value = game.player.maxHealth;
       }
     }
     if (statChanges.containsKey('shield')) {
-      game.player.ship.shield.value += statChanges['shield'];
-      if (game.player.ship.shield.value > game.player.ship.maxShield) {
-        game.player.ship.shield.value = game.player.ship.maxShield;
+      game.player.shield.value += statChanges['shield'];
+      if (game.player.shield.value > game.player.maxShield) {
+        game.player.shield.value = game.player.maxShield;
       }
     }
     if (statChanges.containsKey('maxHealth')) {
-      game.player.ship.modifyMaxHealth(statChanges['maxHealth']);
+      game.player.modifyMaxHealth(statChanges['maxHealth']);
     }
   }
 }
@@ -143,6 +139,6 @@ class RepairUpgrade extends PlayerStatUpgrade {
 
   @override
   void apply(SpaceGame game) {
-    game.player.ship.health.value = game.player.ship.maxHealth;
+    game.player.health.value = game.player.maxHealth;
   }
 }

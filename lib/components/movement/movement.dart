@@ -24,7 +24,9 @@ abstract class MovementBehavior extends Component {
     stats.velocity += direction.normalized() * scalar * delta;
   }
 
-  void rotate(double dt);
+  void rotate(double dt) {
+    stats.direction = Vector2(0, -1)..rotate(parentEntity.angle);
+  }
 
   void stop() {
     stats.velocity = Vector2.zero();
