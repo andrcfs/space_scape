@@ -9,6 +9,7 @@ import 'package:flame/src/gestures/events.dart';
 import 'package:flutter/material.dart';
 // ignore: implementation_imports
 import 'package:flutter/src/services/hardware_keyboard.dart';
+import 'package:space_scape/components/alien_commander.dart';
 import 'package:space_scape/components/basic_enemy.dart';
 import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/player.dart';
@@ -52,6 +53,7 @@ class SpaceGame extends FlameGame
   late final LevelSystem levelSystem;
   late final UpgradeManager upgradeManager;
   late SpawnComponent spawnEnemyA;
+  late SpawnComponent spawnAlienCommander;
   bool testSpawn = false;
 
   final double _updateInterval = .1;
@@ -59,6 +61,7 @@ class SpaceGame extends FlameGame
   bool gameOver = true;
   bool isTest = false;
   double enemySpawnRate = 0.5;
+  late double alienCommanderSpawnRate;
   double w = 0.0;
   double s = 0.0;
   double a = 0.0;
@@ -108,6 +111,8 @@ class SpaceGame extends FlameGame
 
     //ENEMY SPAWN
 
+    alienCommanderSpawnRate = enemySpawnRate * 4;
+
     spawnEnemyA = SpawnComponent(
       factory: (amount) => BasicEnemy(),
       within: false,
@@ -120,13 +125,25 @@ class SpaceGame extends FlameGame
     );
     world.add(spawnEnemyA);
 
+    spawnAlienCommander = SpawnComponent(
+      factory: (amount) => AlienCommander(),
+      within: false,
+      autoStart: false,
+      period: alienCommanderSpawnRate,
+      area: Circle(
+        Vector2(camera.viewport.virtualSize.x / 2,
+          camera.viewport.virtualSize.y / 2),
+        1000),
+    );
+    world.add(spawnAlienCommander);
+
     world.addAll([player, levelSystem, weaponSystem]);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    enemyCount = world.children.whereType<BasicEnemy>().length;
+    enemyCount = world.children.whereType<Enemy>().length;
     _scoreText.text = 'XP: $xp';
     _lvlText.text = 'Level: ${levelSystem.playerLevel}';
     _componentCounter.text = 'Enemies: $enemyCount';
@@ -135,10 +152,14 @@ class SpaceGame extends FlameGame
       _updateTimer = 0.0;
       if (enemyCount >= enemyACap) {
         spawnEnemyA.timer.stop();
+        spawnAlienCommander.timer.stop();
       } else if (!spawnEnemyA.timer.isRunning() && !gameOver && !debugMode) {
         spawnEnemyA.timer.start();
+        spawnAlienCommander.timer.start();
       }
       spawnEnemyA.area =
+          Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
+      spawnAlienCommander.area =
           Circle(Vector2(player.ship.position.x, player.ship.position.y), 1000);
     }
   }
@@ -193,8 +214,10 @@ class SpaceGame extends FlameGame
     isEnemySpawnEnabled = !isEnemySpawnEnabled;
     if (isEnemySpawnEnabled) {
       spawnEnemyA.timer.start();
+      spawnAlienCommander.timer.start();
     } else {
       spawnEnemyA.timer.stop();
+      spawnAlienCommander.timer.stop();
     }
   }
 
@@ -209,6 +232,7 @@ class SpaceGame extends FlameGame
     overlays.add('PlayerUI');
     xp = 0;
     spawnEnemyA.timer.start();
+    spawnAlienCommander.timer.start();
     world.addAll([
       XP(position: Vector2(size.x * 0.4, size.y / 2)),
       BasicEnemy(position: Vector2(size.x + 10, -size.y / 6)),

@@ -6,11 +6,11 @@ import 'package:space_scape/components/enemy.dart';
 import 'package:space_scape/components/explosion.dart';
 import 'package:space_scape/components/xp.dart';
 
-class BasicEnemy extends Enemy {
-  static const double _enemySize = 24.0;
-  static const double _maxHealth = 5;
+class AlienCommander extends Enemy {
+  static final Vector2 _enemySize = Vector2(39, 41);
+  static const double _maxHealth = 10;
   static const double _damage = 1;
-  static const double _enemySpeed = 35.0;
+  static const double _enemySpeed = 45.5;
   static const double _turnSpeed = 1.5;
   static const int _xpDropRate = 50;
 
@@ -26,10 +26,10 @@ class BasicEnemy extends Enemy {
   @override
   int get xpDropRate => _xpDropRate;
 
-  BasicEnemy({
+  AlienCommander({
     super.position,
   }) : super(
-          size: Vector2.all(_enemySize),
+          size: _enemySize,
         ) {
     Enemy.damage = _damage;
   }
@@ -37,11 +37,11 @@ class BasicEnemy extends Enemy {
   @override
   Future<void> loadAnimation() async {
     animation = await game.loadSpriteAnimation(
-      'alienfighter.png',
+      'aliencommander.png',
       SpriteAnimationData.sequenced(
         amount: 5,
         stepTime: .2,
-        textureSize: Vector2(22, 32),
+        textureSize: Vector2(39, 41),
       ),
     );
   }
