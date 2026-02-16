@@ -1,5 +1,7 @@
 import 'package:flame/game.dart';
 
+import '../entities/ship_config.dart';
+
 class MobilityStats {
   double maxSpeed;
   double acceleration;
@@ -16,6 +18,14 @@ class MobilityStats {
     required this.turnSpeed,
     required this.brakeRatio,
   }) {
+    deceleration = (-1) * acceleration * brakeRatio;
+  }
+
+  MobilityStats.fromShipConfig(ShipConfig shipConfig)
+      : maxSpeed = shipConfig.maxSpeed,
+        acceleration = shipConfig.acceleration,
+        turnSpeed = shipConfig.turnSpeed,
+        brakeRatio = shipConfig.brakeRatio {
     deceleration = (-1) * acceleration * brakeRatio;
   }
 }

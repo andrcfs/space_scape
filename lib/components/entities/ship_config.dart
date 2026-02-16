@@ -4,13 +4,13 @@ import '../weapons/weapon.dart';
 
 class ShipConfig {
   final String name;
-  final double baseMaxHealth;
+  final double maxHealth;
   final double maxShield;
-  final double regenAmount;
+  final double healthRegen;
   final double shieldRegenCooldown;
   final double acceleration;
   final double maxSpeed;
-  final double brake;
+  final double brakeRatio;
   final double turnSpeed;
   final double collectRadius;
   final String spritePath;
@@ -18,13 +18,13 @@ class ShipConfig {
 
   const ShipConfig({
     required this.name,
-    required this.baseMaxHealth,
+    required this.maxHealth,
     required this.maxShield,
-    required this.regenAmount,
+    required this.healthRegen,
     required this.shieldRegenCooldown,
     required this.acceleration,
     required this.maxSpeed,
-    required this.brake,
+    required this.brakeRatio,
     required this.turnSpeed,
     required this.collectRadius,
     required this.spritePath,
@@ -33,16 +33,16 @@ class ShipConfig {
 }
 
 // Ships are now just config constants
-class ShipConfigs {
+class Ships {
   static final basicShip = ShipConfig(
     name: 'Basic Ship',
-    baseMaxHealth: 100,
+    maxHealth: 100,
     maxShield: 0,
-    regenAmount: 1,
+    healthRegen: 1,
     shieldRegenCooldown: 10,
     acceleration: 65,
     maxSpeed: 75,
-    brake: 2,
+    brakeRatio: 0.5,
     turnSpeed: 2,
     collectRadius: 40,
     spritePath: 'player.png',
@@ -51,16 +51,16 @@ class ShipConfigs {
 
   static final advancedShip = ShipConfig(
     name: 'Advanced Ship',
-    baseMaxHealth: 150,
+    maxHealth: 150,
     maxShield: 50,
-    regenAmount: 2,
+    healthRegen: 2,
     shieldRegenCooldown: 8,
-    acceleration: 55,
-    maxSpeed: 85,
-    brake: 1.5,
-    turnSpeed: 2.5,
+    acceleration: 105,
+    maxSpeed: 125,
+    brakeRatio: 2.5,
+    turnSpeed: 3.5,
     collectRadius: 50,
-    spritePath: 'advanced_player.png',
+    spritePath: 'player.png',
     defaultWeapon: BulletWeapon(),
   );
 }
