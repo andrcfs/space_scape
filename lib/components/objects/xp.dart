@@ -27,7 +27,7 @@ class XP extends SpriteComponent
   void update(double dt) {
     super.update(dt);
     if (startMoving) {
-      Vector2 direction = game.player.ship.position - position;
+      Vector2 direction = game.player.position - position;
       direction.normalize();
       position += direction * dt * speed.toDouble();
     }

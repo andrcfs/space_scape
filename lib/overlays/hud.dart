@@ -25,11 +25,11 @@ class HUD extends StatelessWidget {
           clipBehavior: Clip.hardEdge,
           child: Stack(
             children: [
-              if (game.player.ship.maxShield > 0)
+              if (game.player.maxShield > 0)
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return ValueListenableBuilder(
-                      valueListenable: game.player.ship.shield,
+                      valueListenable: game.player.shield,
                       builder: (context, value, child) {
                         return Container(
                           clipBehavior: Clip.hardEdge,
@@ -37,7 +37,7 @@ class HUD extends StatelessWidget {
                               color: Colors.blueGrey,
                               borderRadius: BorderRadius.circular(10)),
                           width: value /
-                              game.player.ship.maxShield *
+                              game.player.maxShield *
                               constraints.maxWidth,
                         );
                       },
@@ -47,7 +47,7 @@ class HUD extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ValueListenableBuilder(
-                  valueListenable: game.player.ship.health,
+                  valueListenable: game.player.health,
                   builder: (context, health, child) {
                     return Stack(
                       children: [
@@ -56,8 +56,7 @@ class HUD extends StatelessWidget {
                             color: Colors.red.withAlpha(204), // 0.8 * 255 = 204
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          width:
-                              (200 - 16) * health / game.player.ship.maxHealth,
+                          width: (200 - 16) * health / game.player.maxHealth,
                         ),
                         Center(
                           child: Text(

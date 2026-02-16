@@ -3,11 +3,11 @@ import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../space_game.dart';
-import '../enemy.dart';
+import '../entities/enemy.dart';
+import '../entities/player.dart';
 import '../explosion.dart';
-import '../player.dart';
+import '../objects/xp.dart';
 import '../weapons/weapon.dart';
-import '../xp.dart';
 
 abstract class Ship extends SpriteAnimationComponent
     with HasGameReference<SpaceGame>, CollisionCallbacks {
@@ -23,8 +23,14 @@ abstract class Ship extends SpriteAnimationComponent
   double iTimeLeft = 0;
   static const double iTime = 0.1;
 
+  // Health modifier for upgrades/powerups
+  double _healthModifier = 0;
+  double get healthModifier => _healthModifier;
+
   // These should be overridden by concrete implementations
-  double get maxHealth;
+  double get baseMaxHealth; // Base health value
+  double get maxHealth =>
+      baseMaxHealth + _healthModifier; // Total health including modifiers
   double get maxShield;
   double get regenAmount;
   double get shieldRegenCooldown;
@@ -33,6 +39,12 @@ abstract class Ship extends SpriteAnimationComponent
   double get brake;
   double get turnSpeed;
   double get collectRadius;
+
+  // Method to modify max health
+  void modifyMaxHealth(double amount) {
+    _healthModifier += amount;
+    health.value += amount;
+  }
 
   // Each ship can have its own starting weapons
   Weapon get defaultWeapon;
@@ -97,7 +109,5 @@ abstract class Ship extends SpriteAnimationComponent
     super.update(dt);
 
     if (iTimeLeft > 0) iTimeLeft -= dt;
-
-    // Ship-specific update logic can be added in subclasses
   }
 }

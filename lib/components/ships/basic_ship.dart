@@ -5,7 +5,7 @@ import 'package:space_scape/components/weapons/bullet_weapon.dart';
 class BasicShip extends Ship {
   BasicShip(super.player)
       : super(
-          size: Vector2(32, 39),
+          size: Vector2(36, 39),
         ) {
     // Initialize health and shield with default values
     health.value = maxHealth;
@@ -14,6 +14,9 @@ class BasicShip extends Ship {
 
   @override
   double get maxHealth => 100;
+
+  @override
+  double get baseMaxHealth => 100; // Added missing getter implementation
 
   @override
   double get maxShield => 0;
@@ -40,7 +43,7 @@ class BasicShip extends Ship {
   double get collectRadius => 40;
 
   @override
-  BulletWeapon get defaultWeapon => BulletWeapon(player: player);
+  BulletWeapon get defaultWeapon => BulletWeapon();
 
   @override
   Future<SpriteAnimation> loadShipAnimation() async {
@@ -49,7 +52,7 @@ class BasicShip extends Ship {
       SpriteAnimationData.sequenced(
         amount: 4,
         stepTime: 0.2,
-        textureSize: Vector2(32, 39),
+        textureSize: Vector2(36, 39),
       ),
     );
   }
