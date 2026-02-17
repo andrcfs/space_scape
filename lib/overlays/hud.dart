@@ -29,7 +29,7 @@ class HUD extends StatelessWidget {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return ValueListenableBuilder(
-                      valueListenable: game.player.shield,
+                      valueListenable: game.player.currentShield,
                       builder: (context, value, child) {
                         return Container(
                           clipBehavior: Clip.hardEdge,
@@ -47,7 +47,7 @@ class HUD extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ValueListenableBuilder(
-                  valueListenable: game.player.health,
+                  valueListenable: game.player.currentHealth,
                   builder: (context, health, child) {
                     return Stack(
                       children: [

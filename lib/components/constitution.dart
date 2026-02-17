@@ -1,6 +1,8 @@
 import 'entities/ship_config.dart';
 
 class Constitution {
+  late double health;
+  late double shield;
   double maxHealth;
   double? maxShield = 0;
   double healthRegen;
@@ -15,7 +17,11 @@ class Constitution {
     this.shieldRegen,
     required this.healthRegenCooldown,
     this.shieldRegenCooldown,
-  });
+  }) {
+    health = maxHealth;
+    shield = maxShield ?? 0;
+  }
+
   Constitution.fromShipConfig(ShipConfig shipConfig)
       : maxHealth = shipConfig.maxHealth,
         maxShield = shipConfig.maxShield,

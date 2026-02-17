@@ -78,7 +78,7 @@ abstract class Ship extends SpriteAnimationComponent
   void takeHit(double damage) {
     if (shield.value > 0) {
       iTimeLeft = iTime;
-      player.shieldRegenCurrent = shieldRegenCooldown;
+      //player.shieldRegenCurrent = shieldRegenCooldown;
       shield.value = (shield.value - damage).clamp(0, maxShield);
     } else {
       iTimeLeft = iTime;

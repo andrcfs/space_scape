@@ -41,7 +41,7 @@ class Map1 extends World with HasGameReference<SpaceGame> {
     _updateTimer += dt;
     if (_updateTimer >= _updateInterval) {
       _updateTimer = 0.0;
-      parallax.parallax?.baseVelocity = game.player.mobStats.velocity;
+      parallax.parallax?.baseVelocity = game.player.mobilityStats.velocity;
     }
   }
 }

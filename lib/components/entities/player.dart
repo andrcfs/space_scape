@@ -15,9 +15,9 @@ import '../weapons/weapon.dart';
 class Player extends GameEntity with HasGameReference<SpaceGame> {
   late ShipConfig shipConfig;
   // Health and shield properties
-  late Constitution constitution;
-  ValueNotifier<double> health = ValueNotifier<double>(100);
-  ValueNotifier<double> shield = ValueNotifier<double>(0);
+
+  ValueNotifier<double> currentHealth = ValueNotifier<double>(100);
+  ValueNotifier<double> currentShield = ValueNotifier<double>(0);
 
   double get maxHealth => constitution.maxHealth;
   double get maxShield => constitution.maxShield ?? 0;
@@ -26,14 +26,9 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   late Weapon defaultWeapon;
   List<Weapon> weapons = [];
 
-  // Movement properties
-  MobilityStats mobilityStats;
-
   Player({
-    required this.mobilityStats,
     ShipConfig? initialShip,
   }) : super(
-          mobStats: mobilityStats,
           size: Vector2(1 * 32, 1 * 39),
           anchor: Anchor.center,
         ) {
@@ -51,8 +46,8 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
     defaultWeapon = BulletWeapon();
     weapons.add(defaultWeapon);
     add(defaultWeapon);
-    health.value = maxHealth;
-    shield.value = maxShield;
+    currentHealth.value = maxHealth;
+    currentShield.value = maxShield;
   }
 
   Future<SpriteAnimation> loadShipAnimation() async {
@@ -102,6 +97,8 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
 
   void modifyMaxHealth(double amount) {
     //healthModifier += amount;
-    health.value += amount;
+    constitution.maxHealth += amount;
+    constitution.health += amount;
+    currentHealth.value += amount;
   }
 }

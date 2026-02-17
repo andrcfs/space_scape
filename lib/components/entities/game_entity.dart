@@ -2,12 +2,16 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:space_scape/components/movement/mobility_stats.dart';
 
+import '../constitution.dart';
+
 abstract class GameEntity extends SpriteAnimationComponent {
   double? healthModifier;
   // Movement related properties
-  final MobilityStats mobStats;
+  late final MobilityStats mobilityStats;
+  // Health and shield properties
+  late final Constitution constitution;
+
   GameEntity({
-    required this.mobStats,
     super.size,
     super.anchor,
     super.position,

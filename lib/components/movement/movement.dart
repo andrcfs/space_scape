@@ -14,7 +14,7 @@ abstract class MovementBehavior extends Component {
           'MovementBehavior can only be added to GameEntity components.');
     }
     parentEntity = parent as GameEntity;
-    stats = parentEntity.mobStats;
+    stats = parentEntity.mobilityStats;
   }
 
   void move(double delta);

@@ -109,15 +109,15 @@ class PlayerStatUpgrade extends Upgrade {
   @override
   void apply(SpaceGame game) {
     if (statChanges.containsKey('health')) {
-      game.player.health.value += statChanges['health'];
-      if (game.player.health.value > game.player.maxHealth) {
-        game.player.health.value = game.player.maxHealth;
+      game.player.currentHealth.value += statChanges['health'];
+      if (game.player.currentHealth.value > game.player.maxHealth) {
+        game.player.currentHealth.value = game.player.maxHealth;
       }
     }
     if (statChanges.containsKey('shield')) {
-      game.player.shield.value += statChanges['shield'];
-      if (game.player.shield.value > game.player.maxShield) {
-        game.player.shield.value = game.player.maxShield;
+      game.player.currentShield.value += statChanges['shield'];
+      if (game.player.currentShield.value > game.player.maxShield) {
+        game.player.currentShield.value = game.player.maxShield;
       }
     }
     if (statChanges.containsKey('maxHealth')) {
@@ -139,6 +139,6 @@ class RepairUpgrade extends PlayerStatUpgrade {
 
   @override
   void apply(SpaceGame game) {
-    game.player.health.value = game.player.maxHealth;
+    game.player.currentHealth.value = game.player.maxHealth;
   }
 }
