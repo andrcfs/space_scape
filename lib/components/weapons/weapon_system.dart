@@ -4,6 +4,7 @@ import 'package:space_scape/components/player.dart';
 import '../../space_game.dart';
 import 'bullet_weapon.dart';
 import 'coronal_discharge_weapon.dart';
+import 'enemy_chaser_weapon.dart';
 import 'weapon.dart';
 
 class WeaponSystem extends Component with HasGameReference<SpaceGame> {
@@ -31,6 +32,7 @@ class WeaponSystem extends Component with HasGameReference<SpaceGame> {
     final weapons = [
       BulletWeapon(player: player),
       CoronalDischargeWeapon(player: player),
+      EnemyChaserWeapon(player: player),
       /*
       TurretWeapon(
         player: player, 

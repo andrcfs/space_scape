@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:space_scape/components/enemy_chaser_missile.dart';
-import 'package:space_scape/components/upgrade.dart';
+import 'package:space_scape/components/player.dart';
+import 'package:space_scape/components/upgrades/upgrade.dart';
 
 import 'weapon.dart';
 
@@ -9,77 +10,79 @@ class EnemyChaserWeapon extends Weapon {
   double _cooldown = 4.0;
   double _missileSpeed = 140.0;
   double _turnRate = 3.0;
+  static const String _overlaySpritePath = 'player_enemychaser.png';
+
+  SpriteComponent? _overlay;
 
   EnemyChaserWeapon({
-    required super.player,
-    super.name = 'EnemyChaser',
-    super.description = 'Fires twin homing missiles from the wings',
-    super.iconPath = 'weapons/basic_shot.png',
-    super.unlocked = true,
-  }) : super(weaponId: 'enemy_chaser_weapon') {
+    required Player player,
+    String name = 'EnemyChaser',
+    String description = 'Fires twin homing missiles from the wings',
+    String iconPath = 'weapons/basic_shot.png',
+    bool unlocked = true,
+  }) : super(
+          player: player,
+          name: name,
+          description: description,
+          iconPath: iconPath,
+          pushForce: 0.0,
+          unlocked: unlocked,
+        ) {
     initUpgrades([
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Unlock EnemyChaser',
         level: 0,
-        upgradeType: UpgradeType.weapon,
         statChanges: {},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Reduce cooldown by 10%',
         level: 1,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'cooldown': 0.9},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase missile speed by 15%',
         level: 2,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'missileSpeed': 1.15},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase missile damage by 2',
         level: 3,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'damage': 2.0},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Reduce cooldown by 10%',
         level: 4,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'cooldown': 0.9},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase turn rate by 20%',
         level: 5,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'turnRate': 1.2},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase missile speed by 15%',
         level: 6,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'missileSpeed': 1.15},
       ),
-      UpgradeLevel(
+      WeaponUpgrade(
         name: name,
         icon: iconPath,
         description: 'Increase missile damage by 2',
         level: 7,
-        upgradeType: UpgradeType.weapon,
         statChanges: {'damage': 2.0},
       ),
     ]);
@@ -95,18 +98,37 @@ class EnemyChaserWeapon extends Weapon {
   double? get speed => _missileSpeed;
 
   @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    if (_overlay != null) return;
+
+    final sprite = await game.loadSprite(_overlaySpritePath);
+
+    _overlay = SpriteComponent(
+      sprite: sprite,
+      position: player.ship.position,
+      size: Vector2(36, 39),
+      anchor: Anchor.center,
+      priority: 1,
+    );
+
+    game.world.add(_overlay!);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (_overlay != null) {
+      _overlay!.position = player.ship.position;
+      _overlay!.angle = player.ship.angle;
+    }
+  }
+
+  @override
   void fire() {
     final forward = player.direction.normalized();
-    final right = Vector2(-forward.y, forward.x);
-    final wingOffset = player.ship.size.x * 0.45;
-    final forwardOffset = player.ship.size.y * 0.1;
-
-    final leftSpawn = player.ship.position +
-        right.scaled(-wingOffset) +
-        forward.scaled(forwardOffset);
-    final rightSpawn = player.ship.position +
-        right.scaled(wingOffset) +
-        forward.scaled(forwardOffset);
+    final leftSpawn = _getWingSpawnPosition(Vector2(5, 16));
+    final rightSpawn = _getWingSpawnPosition(Vector2(30, 16));
 
     game.world.addAll([
       EnemyChaserMissile(
@@ -124,6 +146,13 @@ class EnemyChaserWeapon extends Weapon {
         turnRate: _turnRate,
       ),
     ]);
+  }
+
+  Vector2 _getWingSpawnPosition(Vector2 pixelPosition) {
+    final center = player.ship.size * 0.5;
+    final localOffset = pixelPosition - center;
+    final rotatedOffset = localOffset.clone()..rotate(player.ship.angle);
+    return player.ship.position + rotatedOffset;
   }
 
   @override

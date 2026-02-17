@@ -123,8 +123,8 @@ abstract class Enemy extends SpriteAnimationComponent
     }
   }
 
-  void takeDamage(double damage, double pushForce) {
-    if (_isTakingDamage == false) {
+  void takeDamage(double damage, [double pushForce = 0.0]) {
+    if (_isTakingDamage == false && pushForce > 0) {
       _fallBackForce = pushForce;
       _isTakingDamage = true;
     }
@@ -147,16 +147,6 @@ abstract class Enemy extends SpriteAnimationComponent
     _playerDirection = (game.player.ship.position - position).normalized();
     if (_playerDirection.angleToSigned(direction).abs() > 0.1) {
       changeDirection(_playerDirection.angleToSigned(direction), dt);
-    }
-  }
-
-  void takeDamage(double amount) {
-    if (amount <= 0) {
-      return;
-    }
-    _health -= amount;
-    if (_health <= 0) {
-      enemyDeath();
     }
   }
 

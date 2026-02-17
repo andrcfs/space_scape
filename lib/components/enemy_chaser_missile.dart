@@ -29,11 +29,13 @@ class EnemyChaserMissile extends PositionComponent
 
   Vector2 _direction;
   double _age = 0.0;
+  Enemy? _target;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     add(CircleHitbox(collisionType: CollisionType.active));
+    _target = _findNearestEnemy();
   }
 
   @override
@@ -45,9 +47,12 @@ class EnemyChaserMissile extends PositionComponent
       return;
     }
 
-    final target = _findNearestEnemy();
-    if (target != null) {
-      final desired = (target.position - position).normalized();
+    if (_target == null || !_target!.isMounted) {
+      _target = _findNearestEnemy();
+    }
+
+    if (_target != null) {
+      final desired = (_target!.position - position).normalized();
       final angleDelta = _direction.angleToSigned(desired);
       final maxTurn = turnRate * dt;
       final clamped = angleDelta.clamp(-maxTurn, maxTurn);
@@ -55,6 +60,7 @@ class EnemyChaserMissile extends PositionComponent
     }
 
     position += _direction * speed * dt;
+    angle = atan2(_direction.y, _direction.x); // Orient the missile to face its direction
   }
 
   Enemy? _findNearestEnemy() {
@@ -86,7 +92,6 @@ class EnemyChaserMissile extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
     final paint = Paint()
       ..color = const Color(0xFFFFFFFF)
       ..style = PaintingStyle.fill;
