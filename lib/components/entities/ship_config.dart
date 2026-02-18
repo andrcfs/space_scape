@@ -10,7 +10,8 @@ class ShipConfig {
   final double maxHealth;
   final double maxShield;
   final double healthRegen;
-  final double shieldRegenCooldown;
+  final int healthRegenCooldown;
+  final int shieldRegenCooldown;
   final double acceleration;
   final double maxSpeed;
   final double brakeRatio;
@@ -25,6 +26,7 @@ class ShipConfig {
     required this.maxHealth,
     required this.maxShield,
     required this.healthRegen,
+    required this.healthRegenCooldown,
     required this.shieldRegenCooldown,
     required this.acceleration,
     required this.maxSpeed,
@@ -44,6 +46,7 @@ class Ships {
     maxHealth: 100,
     maxShield: 0,
     healthRegen: 1,
+    healthRegenCooldown: 1000,
     shieldRegenCooldown: 10,
     acceleration: 65,
     maxSpeed: 75,
@@ -60,6 +63,7 @@ class Ships {
     maxHealth: 150,
     maxShield: 50,
     healthRegen: 2,
+    healthRegenCooldown: 100,
     shieldRegenCooldown: 8,
     acceleration: 105,
     maxSpeed: 125,

@@ -11,6 +11,7 @@ import 'package:space_scape/components/weapons/bullet_weapon.dart';
 
 import '../../space_game.dart';
 import '../weapons/weapon.dart';
+import 'enemy.dart';
 
 class Player extends GameEntity with HasGameReference<SpaceGame> {
   late ShipConfig shipConfig;
@@ -65,16 +66,51 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   void update(double dt) {
     super.update(dt);
     if (game.gameOver) return;
+    // Update Health and Shield
+    constitution.update(dt);
+    // Update ValueNotifiers for HUD
+    currentHealth.value = constitution.health;
+    currentShield.value = constitution.shield;
 
-    /* if (shieldRegenCurrent > 0) shieldRegenCurrent -= dt;
-    if (shieldRegenCurrent <= 0 && ship.shield.value < ship.maxShield) {
-     ship.shield.value = (ship.shield.value + dt).clamp(0, ship.maxShield);
+    // Check if player died
+    if (!constitution.isAlive) {
+      game.gameOver = true;
+      remove(KeyboardMovement());
     }
+  }
 
-    if (ship.health.value <= 0) {
-    game.gameOver = true;
-    mobilityStats.velocity = Vector2.zero();
-    } */
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollision(intersectionPoints, other);
+    if (other is Enemy && body.collidingWith(other.hitbox)) {
+      if (iTimeLeft <= 0) takeHit(Enemy.damage);
+    }
+    if (other is XP) {
+      if (game.gameOver) return;
+      other.moveToPlayer();
+      if (body.collidingWith(other.hitbox)) {
+        game.levelSystem.addXP(1);
+        game.xp = game.levelSystem.currentXP;
+        other.removeFromParent();
+      }
+    }
+  }
+
+  void takeDamage(double damage) {
+    constitution.takeDamage(damage);
+    // Update ValueNotifiers for HUD
+    currentHealth.value = constitution.health;
+    currentShield.value = constitution.shield;
+  }
+
+  void modifyMaxHealth(double amount) {
+    constitution.modifyMaxHealth(amount);
+    currentHealth.value += amount;
+  }
+
+  void modifyMaxShield(double amount) {
+    constitution.modifyMaxShield(amount);
+    currentShield.value += amount;
   }
 
   void move2(Vector2 delta) {
@@ -94,11 +130,4 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
     add(ship);
     weapons.add(ship.defaultWeapon);
   } */
-
-  void modifyMaxHealth(double amount) {
-    //healthModifier += amount;
-    constitution.maxHealth += amount;
-    constitution.health += amount;
-    currentHealth.value += amount;
-  }
 }
