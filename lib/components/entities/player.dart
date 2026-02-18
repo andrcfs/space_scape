@@ -29,7 +29,6 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   Player({
     ShipConfig? initialShip,
   }) : super(
-          size: Vector2(1 * 32, 1 * 39),
           anchor: Anchor.center,
         ) {
     shipConfig = initialShip ?? Ships.basicShip;
@@ -39,6 +38,7 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   Future<void> onLoad() async {
     await super.onLoad();
     position = game.size / 2;
+    size = shipConfig.size;
     constitution = Constitution.fromShipConfig(shipConfig);
     mobilityStats = MobilityStats.fromShipConfig(shipConfig);
     add(KeyboardMovement());

@@ -1,9 +1,12 @@
 // ship_config.dart
+import 'package:flame/components.dart';
+
 import '../weapons/bullet_weapon.dart';
 import '../weapons/weapon.dart';
 
 class ShipConfig {
   final String name;
+  final Vector2 size;
   final double maxHealth;
   final double maxShield;
   final double healthRegen;
@@ -18,6 +21,7 @@ class ShipConfig {
 
   const ShipConfig({
     required this.name,
+    required this.size,
     required this.maxHealth,
     required this.maxShield,
     required this.healthRegen,
@@ -36,6 +40,7 @@ class ShipConfig {
 class Ships {
   static final basicShip = ShipConfig(
     name: 'Basic Ship',
+    size: Vector2(1 * 32, 1 * 39),
     maxHealth: 100,
     maxShield: 0,
     healthRegen: 1,
@@ -51,6 +56,7 @@ class Ships {
 
   static final advancedShip = ShipConfig(
     name: 'Advanced Ship',
+    size: Vector2(0.6 * 32, 0.6 * 39),
     maxHealth: 150,
     maxShield: 50,
     healthRegen: 2,
