@@ -50,8 +50,8 @@ final List<Upgrade> passiveUpgrades = [
     upgradeType: UpgradeType.passive,
     icon: 'assets/images/upgrades/health.png',
     statChanges: {
-      'maxHealth': 20,
-      'health': 20,
+      'maxHealth': 20.0,
+      'health': 20.0,
     },
   ),
 ];

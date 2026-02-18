@@ -24,6 +24,7 @@ class Constitution {
     health = maxHealth;
     shield = maxShield ?? 0;
   }
+
   bool get isAlive => health > 0;
 
   Constitution.fromShipConfig(ShipConfig shipConfig)
@@ -32,7 +33,9 @@ class Constitution {
         healthRegen = shipConfig.healthRegen,
         shieldRegen = shipConfig.maxShield > 0 ? shipConfig.healthRegen : 0,
         healthRegenCooldown = shipConfig.healthRegenCooldown,
-        shieldRegenCooldown = shipConfig.shieldRegenCooldown;
+        shieldRegenCooldown = shipConfig.shieldRegenCooldown,
+        health = shipConfig.maxHealth,
+        shield = shipConfig.maxShield;
 
   void update(double dt) {
     // Shield regen logic

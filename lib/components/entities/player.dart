@@ -10,6 +10,8 @@ import 'package:space_scape/components/movement/mobility_stats.dart';
 import 'package:space_scape/components/weapons/bullet_weapon.dart';
 
 import '../../space_game.dart';
+import '../explosion.dart';
+import '../objects/xp.dart';
 import '../weapons/weapon.dart';
 import 'enemy.dart';
 
@@ -22,6 +24,8 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
 
   double get maxHealth => constitution.maxHealth;
   double get maxShield => constitution.maxShield ?? 0;
+  double iTimeLeft = 0;
+  static const double iTime = 0.1;
 
   // Weapon configuration
   late Weapon defaultWeapon;
@@ -72,6 +76,8 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
     currentHealth.value = constitution.health;
     currentShield.value = constitution.shield;
 
+    if (iTime > 0) iTimeLeft -= dt;
+
     // Check if player died
     if (!constitution.isAlive) {
       game.gameOver = true;
@@ -83,7 +89,7 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     if (other is Enemy && body.collidingWith(other.hitbox)) {
-      if (iTimeLeft <= 0) takeHit(Enemy.damage);
+      if (iTimeLeft <= 0) takeDamage(Enemy.damage);
     }
     if (other is XP) {
       if (game.gameOver) return;
@@ -97,10 +103,14 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   }
 
   void takeDamage(double damage) {
-    constitution.takeDamage(damage);
-    // Update ValueNotifiers for HUD
-    currentHealth.value = constitution.health;
-    currentShield.value = constitution.shield;
+    if (iTimeLeft <= 0) {
+      constitution.takeDamage(damage);
+      // Update ValueNotifiers for HUD
+      currentHealth.value = constitution.health;
+      currentShield.value = constitution.shield;
+      game.world.add(Explosion(position: position, size: Vector2.all(20)));
+      iTimeLeft = iTime;
+    }
   }
 
   void modifyMaxHealth(double amount) {
