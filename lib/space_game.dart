@@ -14,6 +14,7 @@ import 'package:space_scape/components/entities/enemy.dart';
 import 'package:space_scape/components/entities/player.dart';
 import 'package:space_scape/components/objects/xp.dart';
 
+import 'components/entities/ship_config.dart';
 import 'components/level_system.dart';
 import 'components/upgrades/upgrade_manager.dart';
 import 'components/weapons/weapon_system.dart';
@@ -74,8 +75,8 @@ class SpaceGame extends FlameGame
     await super.onLoad();
     // Game backbones and logic
     player = Player(
-        // initialShip: Ships.advancedShip,
-        );
+      initialShip: Ships.advancedShip,
+    );
     //player.setShip(BasicShip(player));
     weaponSystem = WeaponSystem(player);
     upgradeManager = UpgradeManager(game: this, weaponSystem: weaponSystem);

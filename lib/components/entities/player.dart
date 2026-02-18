@@ -39,9 +39,9 @@ class Player extends GameEntity with HasGameReference<SpaceGame> {
   Future<void> onLoad() async {
     await super.onLoad();
     position = game.size / 2;
-    add(KeyboardMovement());
     constitution = Constitution.fromShipConfig(shipConfig);
     mobilityStats = MobilityStats.fromShipConfig(shipConfig);
+    add(KeyboardMovement());
     animation = await loadShipAnimation();
     defaultWeapon = BulletWeapon();
     weapons.add(defaultWeapon);

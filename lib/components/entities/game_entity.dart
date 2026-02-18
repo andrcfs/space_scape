@@ -4,12 +4,15 @@ import 'package:space_scape/components/movement/mobility_stats.dart';
 
 import '../constitution.dart';
 
-abstract class GameEntity extends SpriteAnimationComponent {
+abstract class GameEntity extends SpriteAnimationComponent
+    with CollisionCallbacks {
   double? healthModifier;
   // Movement related properties
   late final MobilityStats mobilityStats;
   // Health and shield properties
   late final Constitution constitution;
+  // Collision hitboxes
+  late final RectangleHitbox body;
 
   GameEntity({
     super.size,
@@ -21,6 +24,8 @@ abstract class GameEntity extends SpriteAnimationComponent {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    body = RectangleHitbox(isSolid: true);
+    add(body);
     add(CircleHitbox(collisionType: CollisionType.active));
   }
 }
